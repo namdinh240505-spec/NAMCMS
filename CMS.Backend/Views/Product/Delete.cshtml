@@ -1,0 +1,57 @@
+@model CMS.Data.Entities.Product
+
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger text-uppercase">XÓA SẢN PHẨM</h2>
+    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
+
+    <div class="alert alert-warning">
+        <h4>⚠️ Bạn có chắc chắn muốn xóa sản phẩm này không? Hành động này không thể hoàn tác!</h4>
+    </div>
+    <hr />
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 font-weight-bold">ID:</dt>
+                <dd class="col-sm-9">@Model.Id</dd>
+
+                <dt class="col-sm-3 font-weight-bold">Tên sản phẩm:</dt>
+                <dd class="col-sm-9"><b>@Model.Name</b></dd>
+
+                <dt class="col-sm-3 font-weight-bold">Mô tả:</dt>
+                <dd class="col-sm-9">@(Model.Description ?? "Không có mô tả")</dd>
+
+                <dt class="col-sm-3 font-weight-bold">Giá:</dt>
+                <dd class="col-sm-9">@Model.Price.ToString("N0") VNĐ</dd>
+
+                <dt class="col-sm-3 font-weight-bold">Tồn kho:</dt>
+                <dd class="col-sm-9">@Model.StockQuantity</dd>
+
+                <dt class="col-sm-3 font-weight-bold">Danh mục:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-info text-dark">@Model.Category?.Name</span>
+                </dd>
+
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <dt class="col-sm-3 font-weight-bold">Hình ảnh:</dt>
+                    <dd class="col-sm-9">
+                        <img src="@Model.ImageUrl" alt="@Model.Name" width="120" style="border-radius: 8px;" />
+                    </dd>
+                }
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">🗑️ Xác nhận Xóa</button>
+            <a asp-action="Index" class="btn btn-secondary">↩️ Hủy và quay lại</a>
+        </form>
+    </div>
+</div>

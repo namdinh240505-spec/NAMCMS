@@ -1,0 +1,35 @@
+﻿@model CMS.Data.Entities.Post
+
+@{
+    ViewData["Title"] = "Xóa bài viết";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger text-uppercase">XÓA BÀI VIẾT</h2>
+    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
+
+    <div class="alert alert-warning">
+        <h4>Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác!</h4>
+    </div>
+    <hr />
+
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3 font-weight-bold">Tiêu đề bài viết:</dt>
+            <dd class="col-sm-9">@Model.Title</dd>
+
+            <dt class="col-sm-3 font-weight-bold">Chuyên mục:</dt>
+            <dd class="col-sm-9">@Model.Category?.Name</dd>
+
+            <dt class="col-sm-3 font-weight-bold">Ngày đăng:</dt>
+            <dd class="col-sm-9">@Model.CreatedDate.ToString("dd/MM/yyyy")</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy và quay lại</a>
+        </form>
+    </div>
+</div>

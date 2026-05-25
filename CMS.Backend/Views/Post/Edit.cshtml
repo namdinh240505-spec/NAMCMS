@@ -1,0 +1,60 @@
+﻿@model CMS.Data.Entities.Post
+
+@{
+    ViewData["Title"] = "Sửa bài viết";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary text-uppercase">SỬA BÀI VIẾT</h2>
+    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <input type="hidden" asp-for="ImageUrl" />
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Tiêu đề bài viết</label>
+                    <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề..." />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Chuyên mục</label>
+                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                        <option value="">-- Chọn chuyên mục --</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Nội dung</label>
+                    <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Ngày đăng</label>
+                    <input asp-for="CreatedDate" type="date" class="form-control" asp-format="{0:yyyy-MM-dd}" />
+                    <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

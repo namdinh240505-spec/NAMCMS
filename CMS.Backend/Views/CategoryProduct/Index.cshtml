@@ -1,0 +1,148 @@
+@model IEnumerable<CMS.Data.Entities.CategoryProduct>
+
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<style>
+    .cyberpunk-container {
+        background-color: #0b0b12; /* Nền tối sâu */
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #ff007f; /* Viền hồng neon */
+        box-shadow: 0 0 20px rgba(255, 0, 127, 0.2);
+    }
+
+    .cyberpunk-title {
+        color: #00f3ff; /* Xanh Cyan */
+        text-shadow: 0 0 8px #00f3ff;
+        font-weight: 900;
+        letter-spacing: 3px;
+    }
+
+    .cyber-table {
+        color: #d1d1d1;
+        border-collapse: separate;
+        border-spacing: 0 12px; /* Khoảng cách giữa các dòng */
+    }
+
+    .cyber-table thead th {
+        color: #ff007f;
+        border-bottom: 2px solid #00f3ff;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-shadow: 0 0 5px rgba(255, 0, 127, 0.6);
+    }
+
+    .cyber-table tbody tr {
+        background: #161622;
+        transition: 0.3s ease;
+    }
+
+    .cyber-table tbody tr:hover {
+        transform: scale(1.01);
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .cyber-table td {
+        vertical-align: middle;
+        border-top: 1px solid #2a2a3b;
+        border-bottom: 1px solid #2a2a3b;
+    }
+
+    .cyber-table td:first-child {
+        border-left: 2px solid #00f3ff;
+        padding-left: 15px;
+    }
+
+    .cyber-table td:last-child {
+        border-right: 2px solid #ff007f;
+    }
+
+    /* Các nút bấm Neon */
+    .btn-cyber {
+        background: transparent;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+        border-radius: 0;
+        transition: all 0.3s ease;
+    }
+
+    /* Nút Thêm mới - Vàng Cyberpunk */
+    .btn-cyber-add {
+        color: #fcee0a;
+        border: 2px solid #fcee0a;
+    }
+    .btn-cyber-add:hover {
+        background: #fcee0a;
+        color: #000;
+        box-shadow: 0 0 15px #fcee0a;
+    }
+
+    /* Nút Sửa - Xanh Cyan */
+    .btn-cyber-edit {
+        color: #00f3ff;
+        border: 1px solid #00f3ff;
+    }
+    .btn-cyber-edit:hover {
+        background: #00f3ff;
+        color: #000;
+        box-shadow: 0 0 10px #00f3ff;
+    }
+
+    /* Nút Xóa - Hồng Neon */
+    .btn-cyber-delete {
+        color: #ff007f;
+        border: 1px solid #ff007f;
+    }
+    .btn-cyber-delete:hover {
+        background: #ff007f;
+        color: #fff;
+        box-shadow: 0 0 10px #ff007f;
+    }
+</style>
+
+<div class="cyberpunk-container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="cyberpunk-title m-0">DANH MỤC SẢN PHẨM</h2>
+
+        <a asp-action="Create" class="btn btn-cyber btn-cyber-add px-4 py-2">
+            + THÊM MỚI
+        </a>
+    </div>
+
+    <table class="table cyber-table table-borderless">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Chưa có danh mục sản phẩm nào.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="font-weight-bold">@item.Id</td>
+                        <td style="color: #fff; font-size: 1.1em;">@item.Name</td>
+                        <td>@item.Description</td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-cyber btn-cyber-edit mx-1">SỬA</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-cyber btn-cyber-delete mx-1">XÓA</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

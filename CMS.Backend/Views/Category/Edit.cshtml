@@ -1,0 +1,80 @@
+﻿@model CMS.Data.Entities.Category
+
+@{
+    ViewData["Title"] = "Sửa danh mục";
+}
+
+<style>
+    /* Sử dụng lại CSS Cyberpunk đã thiết lập */
+    .cyber-form-container {
+        background: #111;
+        border: 2px solid #00f3ff; /* Viền Xanh Cyan */
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        padding: 40px;
+        color: #fff;
+    }
+
+    .cyber-label {
+        color: #00f3ff;
+        text-transform: uppercase;
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .cyber-input {
+        background: #1a1a1a;
+        border: 1px solid #444;
+        color: #fff;
+        padding: 12px;
+    }
+
+        .cyber-input:focus {
+            border-color: #00f3ff;
+            outline: none;
+        }
+
+    .btn-update-cyber {
+        background: #00f3ff;
+        color: #000;
+        font-weight: 900;
+        padding: 12px 25px;
+        border: none;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="cyber-form-container">
+                <h2 style="color: #00f3ff; text-shadow: 0 0 10px #00f3ff;" class="mb-4">
+                    > SỬA DANH MỤC_
+                </h2>
+
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-4">
+                        <label class="cyber-label">Tên danh mục</label>
+                        <input asp-for="Name" class="form-control cyber-input" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="cyber-label">Mô tả danh mục</label>
+                        <textarea asp-for="Description" class="form-control cyber-input" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mt-5 d-flex justify-content-between">
+                        <a asp-action="Index" style="color: #fcee0a; text-decoration: none;"> < QUAY LẠI </a>
+                        <button type="submit" class="btn-update-cyber">CẬP NHẬT DỮ LIỆU</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

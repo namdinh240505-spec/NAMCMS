@@ -1,0 +1,29 @@
+﻿@model CMS.Data.Entities.Category
+
+@{
+    ViewData["Title"] = "Xóa danh mục";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger text-uppercase">XÓA DANH MỤC</h2>
+    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
+
+    <div class="alert alert-warning">
+        <h4>Bạn có chắc chắn muốn xóa danh mục này không?</h4>
+        <p>Lưu ý: Nếu xóa danh mục này, các bài viết thuộc danh mục này có thể bị ảnh hưởng!</p>
+    </div>
+    <hr />
+
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3 font-weight-bold">Tên danh mục:</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy và quay lại</a>
+        </form>
+    </div>
+</div>
