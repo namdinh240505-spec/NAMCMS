@@ -1,35 +1,60 @@
-﻿@model CMS.Data.Entities.Post
+@model CMS.Data.Entities.Post
 
 @{
     ViewData["Title"] = "Xóa bài viết";
 }
 
-<div class="container mt-4">
-    <h2 class="text-danger text-uppercase">XÓA BÀI VIẾT</h2>
-    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
-
-    <div class="alert alert-warning">
-        <h4>Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác!</h4>
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2 style="color: var(--neon-magenta); text-shadow: 0 0 12px rgba(255,45,123,0.4);">Xóa bài viết</h2>
+            <div class="subtitle">Xác nhận xóa bài viết khỏi hệ thống</div>
+        </div>
     </div>
-    <hr />
 
-    <div>
-        <dl class="row">
-            <dt class="col-sm-3 font-weight-bold">Tiêu đề bài viết:</dt>
-            <dd class="col-sm-9">@Model.Title</dd>
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="cyber-alert cyber-alert-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <strong>Cảnh báo!</strong> Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác!
+                </div>
+            </div>
 
-            <dt class="col-sm-3 font-weight-bold">Chuyên mục:</dt>
-            <dd class="col-sm-9">@Model.Category?.Name</dd>
+            <div class="cyber-card">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="delete-image-preview">
+                        <img src="@Model.ImageUrl" alt="@Model.Title" />
+                    </div>
+                }
 
-            <dt class="col-sm-3 font-weight-bold">Ngày đăng:</dt>
-            <dd class="col-sm-9">@Model.CreatedDate.ToString("dd/MM/yyyy")</dd>
-        </dl>
+                <dl class="cyber-dl">
+                    <dt>Tiêu đề</dt>
+                    <dd><b>@Model.Title</b></dd>
+                    <dt>Chuyên mục</dt>
+                    <dd><span class="badge-cyber badge-cyber-purple">@Model.Category?.Name</span></dd>
+                    <dt>Ngày đăng</dt>
+                    <dd>@Model.CreatedDate.ToString("dd/MM/yyyy")</dd>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <dt>Ảnh</dt>
+                        <dd><span class="badge-cyber badge-cyber-info">Có ảnh đính kèm</span></dd>
+                    }
+                </dl>
+            </div>
 
-        <form asp-action="Delete" method="post">
-            <input type="hidden" asp-for="Id" />
-
-            <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
-            <a asp-action="Index" class="btn btn-secondary">Hủy và quay lại</a>
-        </form>
+            <div class="cyber-form-actions">
+                <form asp-action="Delete" method="post" style="display: inline;">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn-cyber btn-cyber-filled-danger">
+                        <i class="fa-solid fa-trash"></i> Xác nhận xóa
+                    </button>
+                </form>
+                <a asp-action="Index" class="btn-cyber btn-cyber-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Hủy
+                </a>
+            </div>
+        </div>
     </div>
 </div>

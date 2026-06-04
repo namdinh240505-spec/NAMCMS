@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using CMS.Data;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CMS.Data.ApplicationDbContext>(options =>
 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ==========================================
+// CẤU HÌNH AUTHENTICATION BẰNG COOKIE
+// ==========================================
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";           // Đường dẫn trang đăng nhập
+        options.LogoutPath = "/Account/Logout";          // Đường dẫn đăng xuất
+        options.AccessDeniedPath = "/Account/AccessDenied"; // Trang từ chối truy cập
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);  // Cookie tồn tại 8 giờ
+        options.SlidingExpiration = true;                 // Tự động gia hạn khi còn hoạt động
+        options.Cookie.HttpOnly = true;                   // Bảo mật: không truy cập được từ JS
+        options.Cookie.Name = "NamCMS.Auth";              // Tên cookie
+    });
 
 var app = builder.Build();
 
@@ -25,6 +41,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// THỨ TỰ QUAN TRỌNG: Authentication PHẢI đứng trước Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Seed CategoryProduct data programmatically if empty
@@ -42,6 +60,19 @@ using (var scope = app.Services.CreateScope())
                 new CMS.Data.Entities.CategoryProduct { Name = "Phụ kiện", Description = "Phụ kiện công nghệ" },
                 new CMS.Data.Entities.CategoryProduct { Name = "Gia dụng", Description = "Thiết bị điện gia dụng" }
             );
+            context.SaveChanges();
+        }
+
+        // Seed tài khoản Admin mặc định nếu chưa có User nào
+        if (!context.Users.Any())
+        {
+            context.Users.Add(new CMS.Data.Entities.User
+            {
+                Username = "admin",
+                PasswordHash = "admin123", // Mật khẩu mặc định
+                FullName = "Quản trị viên",
+                Role = "Admin"
+            });
             context.SaveChanges();
         }
     }

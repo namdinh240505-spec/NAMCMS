@@ -18,8 +18,4 @@
     <ProjectReference Include="..\CMS.Data\CMS.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Customer\" />
-  </ItemGroup>
-
 </Project>

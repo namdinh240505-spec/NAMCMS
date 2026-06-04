@@ -1,57 +1,145 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NamCMS</title>
+    <meta name="description" content="NamCMS - Hệ thống quản lý nội dung hiện đại" />
+
+    @* Google Fonts: Orbitron (headings) + Inter (body) *@
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+    @* Font Awesome 6 *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/CMS.Backend.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NamCMS</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Post" asp-action="Index">Post</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="CategoryProduct" asp-action="Index">Product Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="cyber-layout">
+        @* ===== SIDEBAR ===== *@
+        <aside class="cyber-sidebar" id="cyberSidebar">
+            @* Brand *@
+            <a class="sidebar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <div class="brand-icon">N</div>
+                <div class="brand-text">Nam<span>CMS</span></div>
+            </a>
+
+            @* Navigation *@
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Tổng quan</div>
+                <a class="nav-item" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+
+                <div class="nav-section-title">Nội dung</div>
+                <a class="nav-item" asp-area="" asp-controller="Category" asp-action="Index">
+                    <i class="fa-solid fa-folder-tree"></i> Danh mục bài viết
+                </a>
+                <a class="nav-item" asp-area="" asp-controller="Post" asp-action="Index">
+                    <i class="fa-solid fa-newspaper"></i> Bài viết
+                </a>
+
+                <div class="nav-section-title">Sản phẩm</div>
+                <a class="nav-item" asp-area="" asp-controller="CategoryProduct" asp-action="Index">
+                    <i class="fa-solid fa-tags"></i> Danh mục SP
+                </a>
+                <a class="nav-item" asp-area="" asp-controller="Product" asp-action="Index">
+                    <i class="fa-solid fa-box-open"></i> Sản phẩm
+                </a>
+
+                <div class="nav-section-title">Kinh doanh</div>
+                <a class="nav-item" asp-area="" asp-controller="Customer" asp-action="Index">
+                    <i class="fa-solid fa-users"></i> Khách hàng
+                </a>
+                <a class="nav-item" asp-area="" asp-controller="Order" asp-action="Index">
+                    <i class="fa-solid fa-cart-shopping"></i> Đơn hàng
+                </a>
+
+                @* Mục Hệ thống: Chỉ Admin mới thấy Quản lý Thành viên *@
+                <div class="nav-section-title">Hệ thống</div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="nav-item" asp-area="" asp-controller="User" asp-action="Index">
+                        <i class="fa-solid fa-user-gear"></i> Thành viên
+                    </a>
+                }
+                <a class="nav-item" asp-area="" asp-controller="Home" asp-action="Privacy">
+                    <i class="fa-solid fa-shield-halved"></i> Bảo mật
+                </a>
+            </nav>
+
+            @* Sidebar Footer *@
+            <div class="sidebar-footer">
+                <span class="status-dot"></span> SYSTEM ONLINE
+                <br />
+                <small>v2.0 // CYBERPUNK</small>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - HiepCMS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </aside>
+
+        @* Sidebar Overlay (mobile) *@
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        @* ===== MAIN CONTENT ===== *@
+        <div class="cyber-main">
+            @* Top Bar *@
+            <header class="cyber-topbar">
+                <div class="topbar-left">
+                    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="topbar-breadcrumb">
+                        NamCMS // <span>@ViewData["Title"]</span>
+                    </div>
+                </div>
+
+                @* User Info & Logout *@
+                <div class="topbar-right">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <div class="topbar-user">
+                            <div class="user-avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <span class="user-name">@(User.FindFirst("FullName")?.Value ?? User.Identity.Name)</span>
+                                <span class="user-role">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <i class="fa-solid fa-shield-halved"></i> @:Admin
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-pen-nib"></i> @:Editor
+                                    }
+                                </span>
+                            </div>
+                            <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="topbar-logout" title="Đăng xuất">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </header>
+
+            @* Page Content *@
+            <main class="cyber-content" role="main">
+                @RenderBody()
+            </main>
+
+            @* Footer *@
+            <footer class="cyber-footer">
+                &copy; 2026 NamCMS &mdash; Nguyễn Định Nam
+                &bull; <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </footer>
         </div>
-    </footer>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,4 +1,5 @@
-﻿using CMS.Data;
+using Microsoft.AspNetCore.Authorization;
+using CMS.Data;
 using CMS.Data.Entities; // Để hiểu class Category
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

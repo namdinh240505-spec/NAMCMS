@@ -1,111 +1,46 @@
 @model CMS.Data.Entities.CategoryProduct
 
 @{
-    ViewData["Title"] = "Thêm danh mục sản phẩm mới";
+    ViewData["Title"] = "Thêm danh mục sản phẩm";
 }
 
-<style>
-    body {
-        background-color: #050505; /* Nền cực tối */
-    }
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Khởi tạo danh mục SP</h2>
+            <div class="subtitle">Thêm danh mục sản phẩm mới vào hệ thống</div>
+        </div>
+    </div>
 
-    .cyber-form-container {
-        background: #111;
-        border: 2px solid #fcee0a; /* Viền vàng Neon rực rỡ */
-        box-shadow: 0 0 15px rgba(252, 238, 10, 0.3);
-        padding: 40px;
-        color: #fff;
-        clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%); /* Cắt góc kiểu công nghệ */
-    }
-
-    .cyber-label {
-        color: #fcee0a;
-        text-transform: uppercase;
-        font-weight: bold;
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-        display: block;
-    }
-
-    .cyber-input {
-        background: #1a1a1a;
-        border: 1px solid #444;
-        color: #00f3ff; /* Chữ màu xanh Cyan khi nhập */
-        border-radius: 0;
-        padding: 12px;
-        transition: 0.3s;
-    }
-
-    .cyber-input:focus {
-        background: #222;
-        border-color: #00f3ff;
-        box-shadow: 0 0 10px #00f3ff;
-        color: #00f3ff;
-        outline: none;
-    }
-
-    .btn-save-cyber {
-        background: #fcee0a;
-        color: #000;
-        font-weight: 900;
-        border: none;
-        text-transform: uppercase;
-        padding: 15px 30px;
-        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-        transition: 0.3s;
-    }
-
-    .btn-save-cyber:hover {
-        background: #fff;
-        box-shadow: 0 0 20px #fff;
-        transform: translateY(-2px);
-    }
-
-    .text-danger {
-        color: #ff007f !important; /* Lỗi hiện màu hồng Neon */
-        font-size: 0.9em;
-        text-transform: italic;
-    }
-</style>
-
-<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-7">
+        <div class="col-lg-7 col-md-9">
             <div class="cyber-form-container">
-                <h2 style="color: #fcee0a; text-shadow: 0 0 10px #fcee0a;" class="mb-4">
-                    > KHỞI TẠO DANH MỤC SẢN PHẨM_
-                </h2>
-
                 <form asp-action="Create" method="post">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                    <div class="mb-4">
+                    <div class="cyber-form-group">
                         <label class="cyber-label">Tên danh mục</label>
-                        <input asp-for="Name" class="form-control cyber-input" placeholder="Nhập tên danh mục sản phẩm..." />
+                        <input asp-for="Name" class="cyber-input" placeholder="Nhập tên danh mục sản phẩm..." />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="cyber-form-group">
                         <label class="cyber-label">Mô tả chi tiết</label>
-                        <textarea asp-for="Description" class="form-control cyber-input" rows="4"
+                        <textarea asp-for="Description" class="cyber-input" rows="4"
                                   placeholder="Nhập mô tả danh mục..."></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
 
-                    <div class="mt-5 d-flex justify-content-between align-items-center">
-                        <a asp-action="Index" style="color: #00f3ff; text-decoration: none; font-weight: bold;">
-                            < QUAY LẠI HỆ THỐNG
-                        </a>
-                        <button type="submit" class="btn-save-cyber">
-                            XÁC NHẬN LƯU [ENTER]
+                    <div class="cyber-form-actions">
+                        <button type="submit" class="btn-cyber btn-cyber-filled-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu danh mục
                         </button>
+                        <a asp-action="Index" class="btn-cyber btn-cyber-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
                     </div>
                 </form>
             </div>
-
-            <p class="text-center mt-3" style="color: #444; font-size: 0.8em; letter-spacing: 2px;">
-                USER: NAM_DINH_NGUYEN | STATUS: CONNECTED | VERSION: 2.1.2.3.1.1.0.1.7.0
-            </p>
         </div>
     </div>
 </div>

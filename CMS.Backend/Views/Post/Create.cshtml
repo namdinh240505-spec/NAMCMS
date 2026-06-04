@@ -1,50 +1,82 @@
-﻿
 @model CMS.Data.Entities.Post
 
 @{
     ViewData["Title"] = "Thêm bài viết mới";
 }
 
-<div class="container mt-4">
-    <h2 class="text-success text-uppercase">THÊM BÀI VIẾT MỚI</h2>
-    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
-    <hr />
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Thêm bài viết</h2>
+            <div class="subtitle">Tạo bài viết mới cho hệ thống</div>
+        </div>
+    </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="cyber-form-container">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Tiêu đề bài viết</label>
-                    <input asp-for="Title" class="form-control" placeholder="Nhập tiêu đề bài viết..." />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Tiêu đề bài viết</label>
+                        <input asp-for="Title" class="cyber-input" placeholder="Nhập tiêu đề bài viết..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Chuyên mục</label>
-                    <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
-                        <option value="">-- Chọn chuyên mục --</option>
-                    </select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Nội dung</label>
-                    <textarea asp-for="Content" class="form-control" rows="5" placeholder="Viết nội dung vào đây..."></textarea>
-                    <span asp-validation-for="Content" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Chuyên mục</label>
+                        <select asp-for="CategoryId" class="cyber-input" asp-items="ViewBag.CategoryId">
+                            <option value="">— Chọn chuyên mục —</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Ngày đăng</label>
-                    <input asp-for="CreatedDate" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                    <span asp-validation-for="CreatedDate" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Nội dung</label>
+                        <textarea asp-for="Content" class="cyber-input" rows="6"
+                                  placeholder="Viết nội dung vào đây..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
 
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">Lưu bài viết</button>
-                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                </div>
-            </form>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">
+                            <i class="fa-solid fa-image"></i> Ảnh bài viết
+                        </label>
+                        <div class="cyber-upload-zone" id="uploadZone">
+                            <input type="file" name="ImageFile" id="imageInput" accept="image/*"
+                                   class="cyber-file-input" />
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>Kéo thả hoặc nhấn để chọn ảnh</span>
+                                <small>Hỗ trợ: JPG, PNG, GIF, WEBP</small>
+                            </div>
+                            <div class="upload-preview" id="uploadPreview" style="display: none;">
+                                <img id="previewImg" src="#" alt="Preview" />
+                                <button type="button" class="preview-remove" id="removeBtn" title="Xóa ảnh">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Ngày đăng</label>
+                        <input asp-for="CreatedDate" type="date" class="cyber-input"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-actions">
+                        <button type="submit" class="btn-cyber btn-cyber-filled-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu bài viết
+                        </button>
+                        <a asp-action="Index" class="btn-cyber btn-cyber-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -53,4 +85,54 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Image preview & drag-drop functionality
+        (function () {
+            const input = document.getElementById('imageInput');
+            const zone = document.getElementById('uploadZone');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const preview = document.getElementById('uploadPreview');
+            const previewImg = document.getElementById('previewImg');
+            const removeBtn = document.getElementById('removeBtn');
+
+            function showPreview(file) {
+                if (!file || !file.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    placeholder.style.display = 'none';
+                    preview.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            input.addEventListener('change', function () {
+                if (this.files && this.files[0]) showPreview(this.files[0]);
+            });
+
+            // Drag & drop
+            zone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', function () {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    input.files = e.dataTransfer.files;
+                    showPreview(e.dataTransfer.files[0]);
+                }
+            });
+
+            removeBtn.addEventListener('click', function () {
+                input.value = '';
+                placeholder.style.display = 'flex';
+                preview.style.display = 'none';
+                previewImg.src = '#';
+            });
+        })();
+    </script>
 }

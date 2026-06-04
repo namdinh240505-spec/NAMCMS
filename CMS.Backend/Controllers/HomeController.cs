@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using CMS.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

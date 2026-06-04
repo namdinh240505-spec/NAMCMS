@@ -4,61 +4,110 @@
     ViewData["Title"] = "Sửa sản phẩm";
 }
 
-<div class="container mt-4">
-    <h2 class="text-primary text-uppercase">SỬA SẢN PHẨM</h2>
-    <p>Sinh viên thực hiện: <b>Nguyễn Định Nam - 2123110170</b></p>
-    <hr />
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Sửa sản phẩm</h2>
+            <div class="subtitle">Cập nhật thông tin sản phẩm</div>
+        </div>
+    </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <form asp-action="Edit" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="cyber-form-container">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ImageUrl" />
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Tên sản phẩm</label>
-                    <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm..." />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Tên sản phẩm</label>
+                        <input asp-for="Name" class="cyber-input" placeholder="Nhập tên sản phẩm..." />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Mô tả</label>
-                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Mô tả</label>
+                        <textarea asp-for="Description" class="cyber-input" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Giá (VNĐ)</label>
-                    <input asp-for="Price" type="number" class="form-control" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label class="cyber-label">Giá (VNĐ)</label>
+                                <input asp-for="Price" type="number" class="cyber-input" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label class="cyber-label">Số lượng tồn kho</label>
+                                <input asp-for="StockQuantity" type="number" class="cyber-input" />
+                                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Số lượng tồn kho</label>
-                    <input asp-for="StockQuantity" type="number" class="form-control" />
-                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
-                </div>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">
+                            <i class="fa-solid fa-image"></i> Ảnh sản phẩm
+                        </label>
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Đường dẫn ảnh (URL)</label>
-                    <input asp-for="ImageUrl" class="form-control" placeholder="Nhập URL hình ảnh..." />
-                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                </div>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="cyber-current-image" id="currentImage">
+                                <div class="current-image-header">
+                                    <span><i class="fa-solid fa-image"></i> Ảnh hiện tại</span>
+                                </div>
+                                <img src="@Model.ImageUrl" alt="Ảnh sản phẩm" />
+                            </div>
+                        }
 
-                <div class="mb-3">
-                    <label class="form-label font-weight-bold">Danh mục sản phẩm</label>
-                    <select asp-for="CategoryProductId" class="form-select" asp-items="ViewBag.CategoryProducts">
-                        <option value="">-- Chọn danh mục --</option>
-                    </select>
-                    <span asp-validation-for="CategoryProductId" class="text-danger"></span>
-                </div>
+                        <div class="cyber-upload-zone" id="uploadZone">
+                            <input type="file" name="ImageFile" id="imageInput" accept="image/*"
+                                   class="cyber-file-input" />
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <span>Chọn ảnh mới để thay thế</span>
+                                }
+                                else
+                                {
+                                    <span>Kéo thả hoặc nhấn để chọn ảnh sản phẩm</span>
+                                }
+                                <small>Hỗ trợ: JPG, PNG, GIF, WEBP</small>
+                            </div>
+                            <div class="upload-preview" id="uploadPreview" style="display: none;">
+                                <img id="previewImg" src="#" alt="Preview" />
+                                <div class="preview-badge">ẢNH MỚI</div>
+                                <button type="button" class="preview-remove" id="removeBtn" title="Hủy thay đổi">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary">💾 Lưu thay đổi</button>
-                    <a asp-action="Index" class="btn btn-secondary">↩️ Quay lại danh sách</a>
-                </div>
-            </form>
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Danh mục sản phẩm</label>
+                        <select asp-for="CategoryProductId" class="cyber-input" asp-items="ViewBag.CategoryProducts">
+                            <option value="">— Chọn danh mục —</option>
+                        </select>
+                        <span asp-validation-for="CategoryProductId" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-actions">
+                        <button type="submit" class="btn-cyber btn-cyber-filled-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+                        </button>
+                        <a asp-action="Index" class="btn-cyber btn-cyber-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -67,4 +116,53 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        (function () {
+            const input = document.getElementById('imageInput');
+            const zone = document.getElementById('uploadZone');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const preview = document.getElementById('uploadPreview');
+            const previewImg = document.getElementById('previewImg');
+            const removeBtn = document.getElementById('removeBtn');
+
+            function showPreview(file) {
+                if (!file || !file.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImg.src = e.target.result;
+                    placeholder.style.display = 'none';
+                    preview.style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            input.addEventListener('change', function () {
+                if (this.files && this.files[0]) showPreview(this.files[0]);
+            });
+
+            // Drag & drop
+            zone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            zone.addEventListener('dragleave', function () {
+                zone.classList.remove('drag-over');
+            });
+            zone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    input.files = e.dataTransfer.files;
+                    showPreview(e.dataTransfer.files[0]);
+                }
+            });
+
+            removeBtn.addEventListener('click', function () {
+                input.value = '';
+                placeholder.style.display = 'flex';
+                preview.style.display = 'none';
+                previewImg.src = '#';
+            });
+        })();
+    </script>
 }

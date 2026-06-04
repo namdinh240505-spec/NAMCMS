@@ -4,90 +4,97 @@
     ViewData["Title"] = "Quản lý sản phẩm";
 }
 
-<div class="container mt-4">
-    <h2 class="text-primary text-uppercase">QUẢN LÝ SẢN PHẨM</h2>
-    <p>Sinh viên: <b>Nguyễn Định Nam - 2123110170</b></p>
-
-    @* --- BỘ LỌC THEO DANH MỤC --- *@
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <form method="get" asp-action="Index" class="row g-3 align-items-end">
-                <div class="col-md-5">
-                    <label class="form-label font-weight-bold">Lọc theo danh mục sản phẩm</label>
-                    <select name="categoryId" class="form-select" asp-items="ViewBag.Categories">
-                        <option value="">-- Tất cả danh mục --</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100">Lọc</button>
-                </div>
-            </form>
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Sản phẩm</h2>
+            <div class="subtitle">Quản lý danh sách sản phẩm trong hệ thống</div>
         </div>
+        <a asp-action="Create" class="btn-cyber btn-cyber-success">
+            <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+        </a>
     </div>
 
-    @* --- NÚT THÊM MỚI --- *@
-    <div class="mb-3">
-        <a asp-action="Create" class="btn btn-success">➕ Thêm sản phẩm mới</a>
+    @* Filter *@
+    <div class="cyber-filter">
+        <form method="get" asp-action="Index" style="display: contents;">
+            <div class="filter-group">
+                <label>Lọc theo danh mục</label>
+                <select name="categoryId" class="cyber-input" asp-items="ViewBag.Categories">
+                    <option value="">— Tất cả danh mục —</option>
+                </select>
+            </div>
+            <div style="flex-shrink: 0;">
+                <button type="submit" class="btn-cyber btn-cyber-primary">
+                    <i class="fa-solid fa-filter"></i> Lọc
+                </button>
+            </div>
+        </form>
     </div>
 
-    @* --- BẢNG DANH SÁCH SẢN PHẨM --- *@
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark text-center">
-            <tr>
-                <th>ID</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Tồn kho</th>
-                <th>Danh mục</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Any())
-            {
+    <div class="cyber-table-wrapper">
+        <table class="cyber-table">
+            <thead>
                 <tr>
-                    <td colspan="7" class="text-center">Không tìm thấy sản phẩm nào.</td>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th class="text-end">Giá</th>
+                    <th class="text-center">Tồn kho</th>
+                    <th class="text-center">Danh mục</th>
+                    <th class="text-center">Thao tác</th>
                 </tr>
-            }
-            else
-            {
-                foreach (var item in Model)
+            </thead>
+            <tbody>
+                @if (!Model.Any())
                 {
-                    <tr>
-                        <td class="text-center">@item.Id</td>
-                        <td class="text-center">
-                            @if (!string.IsNullOrEmpty(item.ImageUrl))
-                            {
-                                <img src="@item.ImageUrl" alt="@item.Name" width="60" style="border-radius: 6px;" />
-                            }
-                            else
-                            {
-                                <span class="text-muted">Không có ảnh</span>
-                            }
-                        </td>
-                        <td><b>@item.Name</b></td>
-                        <td class="text-end">@item.Price.ToString("N0") VNĐ</td>
-                        <td class="text-center">
-                            @if (item.StockQuantity > 0)
-                            {
-                                <span class="badge bg-success">@item.StockQuantity</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Hết hàng</span>
-                            }
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-info text-dark">@item.Category?.Name</span>
-                        </td>
-                        <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️ Sửa</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️ Xóa</a>
-                        </td>
+                    <tr class="empty-row">
+                        <td colspan="7">Không tìm thấy sản phẩm nào.</td>
                     </tr>
                 }
-            }
-        </tbody>
-    </table>
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">@item.Id</td>
+                            <td class="text-center">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Name" class="product-thumb" />
+                                }
+                                else
+                                {
+                                    <span style="color: var(--text-muted); font-size: 0.8rem;">N/A</span>
+                                }
+                            </td>
+                            <td><b>@item.Name</b></td>
+                            <td class="text-end">@item.Price.ToString("N0") VNĐ</td>
+                            <td class="text-center">
+                                @if (item.StockQuantity > 0)
+                                {
+                                    <span class="badge-cyber badge-cyber-success">@item.StockQuantity</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-cyber badge-cyber-danger">Hết hàng</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <span class="badge-cyber badge-cyber-info">@item.Category?.Name</span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-cyber btn-cyber-primary btn-cyber-sm">
+                                    <i class="fa-solid fa-pen"></i> Sửa
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn-cyber btn-cyber-danger btn-cyber-sm">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

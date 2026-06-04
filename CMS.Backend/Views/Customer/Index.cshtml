@@ -1,17 +1,17 @@
-@model IEnumerable<CMS.Data.Entities.CategoryProduct>
+@model IEnumerable<CMS.Data.Entities.Customer>
 
 @{
-    ViewData["Title"] = "Danh mục sản phẩm";
+    ViewData["Title"] = "Quản lý khách hàng";
 }
 
 <div class="animate-fade-in">
     <div class="page-header">
         <div>
-            <h2>Danh mục sản phẩm</h2>
-            <div class="subtitle">Quản lý phân loại sản phẩm trong hệ thống</div>
+            <h2>Khách hàng</h2>
+            <div class="subtitle">Quản lý thông tin khách hàng</div>
         </div>
         <a asp-action="Create" class="btn-cyber btn-cyber-success">
-            <i class="fa-solid fa-plus"></i> Thêm mới
+            <i class="fa-solid fa-user-plus"></i> Thêm khách hàng
         </a>
     </div>
 
@@ -20,16 +20,18 @@
             <thead>
                 <tr>
                     <th class="text-center">ID</th>
-                    <th>Tên danh mục</th>
-                    <th>Mô tả</th>
-                    <th class="text-center">Hành động</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th class="text-center">Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th class="text-center">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @if (!Model.Any())
                 {
                     <tr class="empty-row">
-                        <td colspan="4">Chưa có danh mục sản phẩm nào.</td>
+                        <td colspan="6">Không có khách hàng nào.</td>
                     </tr>
                 }
                 else
@@ -38,8 +40,10 @@
                     {
                         <tr>
                             <td class="text-center">@item.Id</td>
-                            <td><b>@item.Name</b></td>
-                            <td>@item.Description</td>
+                            <td><b>@item.FullName</b></td>
+                            <td>@item.Email</td>
+                            <td class="text-center">@(item.Phone ?? "Chưa có")</td>
+                            <td>@(item.Address ?? "Chưa có")</td>
                             <td class="text-center">
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn-cyber btn-cyber-primary btn-cyber-sm">
                                     <i class="fa-solid fa-pen"></i> Sửa
