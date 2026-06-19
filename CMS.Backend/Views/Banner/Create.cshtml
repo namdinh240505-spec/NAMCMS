@@ -1,0 +1,94 @@
+@model CMS.Data.Entities.Banner
+
+@{
+    ViewData["Title"] = "Thêm banner mới";
+}
+
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Thêm banner mới</h2>
+            <div class="subtitle">Khởi tạo ảnh quảng cáo hiển thị trên website</div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="cyber-form-container">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Tiêu đề banner <span class="text-danger">*</span></label>
+                        <input asp-for="Title" class="cyber-input" placeholder="Nhập tiêu đề banner quảng cáo..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Mô tả ngắn</label>
+                        <textarea asp-for="Description" class="cyber-input" rows="3"
+                                  placeholder="Nhập mô tả ngắn hiển thị kèm theo banner (nếu có)..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Chọn ảnh banner <span class="text-danger">*</span></label>
+                        <input type="file" name="ImageFile" accept="image/*" class="cyber-input" required />
+                        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        <small class="text-muted mt-1 d-block">Định dạng khuyên dùng: .jpg, .png, .webp (Kích thước: 1920x600 hoặc tỷ lệ tương tự).</small>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Liên kết (Link URL)</label>
+                        <input asp-for="LinkUrl" class="cyber-input" placeholder="Ví dụ: /products, https://google.com..." />
+                        <span asp-validation-for="LinkUrl" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label class="cyber-label">Vị trí hiển thị</label>
+                                <select asp-for="Position" class="cyber-input">
+                                    <option value="HomeHero">Home Hero (Trang chủ chính)</option>
+                                    <option value="Sidebar">Sidebar (Cột phụ)</option>
+                                    <option value="MiddleBanner">Middle Banner (Banner giữa trang)</option>
+                                </select>
+                                <span asp-validation-for="Position" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="cyber-form-group">
+                                <label class="cyber-label">Thứ tự hiển thị</label>
+                                <input asp-for="SortOrder" type="number" class="cyber-input" placeholder="Nhập số thứ tự (ví dụ: 0, 1, 2...)" />
+                                <span asp-validation-for="SortOrder" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <div class="form-check form-switch mt-2">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch" style="cursor: pointer;">
+                            <label class="form-check-label cyber-label" for="isActiveSwitch" style="padding-left: 10px; cursor: pointer; display: inline-block;">Kích hoạt hiển thị</label>
+                        </div>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-actions mt-4">
+                        <button type="submit" class="btn-cyber btn-cyber-filled-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Lưu banner
+                        </button>
+                        <a asp-action="Index" class="btn-cyber btn-cyber-secondary">
+                            <i class="fa-solid fa-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

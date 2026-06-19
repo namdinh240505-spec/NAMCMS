@@ -1,4 +1,4 @@
-﻿//Nguyễn Đình Nam - 2123110170
+//Nguyễn Đình Nam - 2123110170
 using CMS.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,5 +17,8 @@ namespace CMS.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
+        public DbSet<Banner> Banners { get; set; }
     }
 }

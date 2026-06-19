@@ -1,4 +1,4 @@
-﻿//sinh vien: nguyen vu hiep
+//sinh vien: nguyen vu hiep
 //mssv:2123110161
 //ngay tao:15/5/26
 
@@ -25,6 +25,10 @@ namespace CMS.Data.Entities
         public int Status { get; set; } // 0: Chờ duyệt, 1: Đang giao, 2: Đã xong
 
         public string? Notes { get; set; }
+
+        public string? ShippingAddress { get; set; }
+        public string? ShippingPhone { get; set; }
+        public string? ShippingName { get; set; }
 
         [ForeignKey("CustomerId")]
         public virtual Customer? Customer { get; set; }

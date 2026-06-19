@@ -23,9 +23,13 @@ namespace CMS.Data.Entities
 
         public string? ImageUrl { get; set; }
 
+        public string? Brand { get; set; }
+
         public int CategoryProductId { get; set; }
 
         [ForeignKey("CategoryProductId")]
         public CategoryProduct? Category { get; set; }
+
+        public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
     }
 }

@@ -1,0 +1,98 @@
+@model IEnumerable<CMS.Data.Entities.Banner>
+
+@{
+    ViewData["Title"] = "Quản lý Banner";
+}
+
+<div class="animate-fade-in">
+    <div class="page-header">
+        <div>
+            <h2>Quản lý Banner</h2>
+            <div class="subtitle">Thiết lập ảnh quảng cáo & slideshow trang chủ</div>
+        </div>
+        <a asp-action="Create" class="btn-cyber btn-cyber-success">
+            <i class="fa-solid fa-plus"></i> Thêm mới
+        </a>
+    </div>
+
+    <div class="cyber-table-wrapper">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 80px;">ID</th>
+                    <th style="width: 150px;">Ảnh</th>
+                    <th>Tiêu đề / Vị trí</th>
+                    <th>Liên kết (Link)</th>
+                    <th class="text-center" style="width: 100px;">Thứ tự</th>
+                    <th class="text-center" style="width: 120px;">Trạng thái</th>
+                    <th class="text-center" style="width: 180px;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">@item.Id</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="@item.Title" style="max-width: 120px; max-height: 70px; border-radius: 4px; border: 1px solid var(--border-color, #ccc);" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không có ảnh</span>
+                            }
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; font-size: 1.05rem;">@item.Title</div>
+                            <span class="badge bg-secondary" style="font-size: 0.75rem; text-transform: uppercase;">@item.Position</span>
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <div style="font-size: 0.85rem; color: var(--text-muted, #777); margin-top: 4px;">@item.Description</div>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.LinkUrl))
+                            {
+                                <a href="@item.LinkUrl" target="_blank" style="color: var(--primary, #007bff); text-decoration: underline; font-size: 0.9rem;">
+                                    @item.LinkUrl
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted" style="font-size: 0.9rem;">Không có</span>
+                            }
+                        </td>
+                        <td class="text-center">@item.SortOrder</td>
+                        <td class="text-center">
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success" style="font-size: 0.85rem; padding: 5px 10px;">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger" style="font-size: 0.85rem; padding: 5px 10px;">Tắt</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-cyber btn-cyber-primary btn-cyber-sm">
+                                <i class="fa-solid fa-pen"></i> Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-cyber btn-cyber-danger btn-cyber-sm">
+                                <i class="fa-solid fa-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted" style="padding: var(--space-8);">
+                            Chưa có banner nào trong hệ thống. Hãy thêm mới ngay!
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

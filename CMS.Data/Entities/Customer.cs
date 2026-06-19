@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,5 +30,6 @@ namespace CMS.Data.Entities
         public string Password { get; set; } // Lưu mật khẩu thô theo yêu cầu tối giản
 
         public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<CustomerAddress>? Addresses { get; set; }
     }
 }
