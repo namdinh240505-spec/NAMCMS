@@ -1,0 +1,124 @@
+NamCMS – Hệ thống Quản lý Nội dung & Thương mại Điện tử
+
+> **NamCMS** là một hệ thống web fullstack kết hợp **Quản lý nội dung (CMS)** và **Thương mại điện tử (E-Commerce)**, được xây dựng bằng **ASP.NET Core 8** (Backend) và **React 19** (Frontend).
+
+---
+
+## Mục lục
+
+- [Tổng quan](#-tổng-quan)
+- [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
+- [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
+- [Tính năng chính](#-tính-năng-chính)
+- [Cài đặt & Chạy dự án](#-cài-đặt--chạy-dự-án)
+- [Cấu trúc thư mục](#-cấu-trúc-thư-mục)
+- [API Endpoints](#-api-endpoints)
+- [Tác giả](#-tác-giả)
+
+---
+
+## 🌐 Tổng quan
+
+**NamCMS** cung cấp hai phần chính:
+
+| Thành phần | Mô tả |
+|---|---|
+| **Trang Admin** (MVC) | Giao diện quản trị sử dụng ASP.NET MVC với Razor Views, dành cho quản lý sản phẩm, đơn hàng, bài viết, banner, danh mục, khách hàng và tài khoản. |
+| **Trang khách hàng** (React SPA) | Giao diện mua sắm hiện đại dành cho người dùng cuối, bao gồm trang chủ, danh sách sản phẩm, giỏ hàng, thanh toán, blog và quản lý tài khoản. |
+
+Hai phần giao tiếp với nhau thông qua **RESTful API**, được thiết kế tách biệt rõ ràng giữa frontend và backend.
+
+---
+
+## 🛠️ Công nghệ sử dụng
+
+### Backend
+| Công nghệ | Phiên bản | Mục đích |
+|---|---|---|
+| ASP.NET Core | 8.0 | Web framework chính |
+| Entity Framework Core | 8.0 | ORM – truy vấn cơ sở dữ liệu |
+| SQL Server | — | Hệ quản trị CSDL |
+| Swagger / Swashbuckle | 10.x | Tài liệu API tự động |
+| Cookie Authentication | — | Xác thực người dùng Admin |
+
+### Frontend
+| Công nghệ | Phiên bản | Mục đích |
+|---|---|---|
+| React | 19.x | Thư viện xây dựng UI |
+| React Router DOM | 7.x | Điều hướng SPA |
+| React Icons | 5.x | Bộ icon |
+| React Hot Toast | 2.x | Thông báo toast |
+| Create React App | 5.x | Công cụ khởi tạo & build |
+
+---
+
+## 🏗️ Kiến trúc hệ thống
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Client (Browser)                  │
+├──────────────────────┬──────────────────────────────┤
+│   React SPA (:3000)  │   Admin MVC (Razor Views)    │
+│   Trang khách hàng   │   Trang quản trị             │
+└──────────┬───────────┴──────────┬───────────────────┘
+           │ REST API             │ MVC Controller
+           ▼                     ▼
+┌─────────────────────────────────────────────────────┐
+│            ASP.NET Core 8 Backend (:5xxx)           │
+│  ┌─────────────────┐  ┌──────────────────────────┐  │
+│  │  API Controllers │  │  MVC Controllers + Views │  │
+│  └────────┬────────┘  └────────────┬─────────────┘  │
+│           └────────────┬───────────┘                │
+│                        ▼                            │
+│           ┌────────────────────────┐                │
+│           │  Entity Framework Core │                │
+│           └────────────┬───────────┘                │
+└────────────────────────┼────────────────────────────┘
+                         ▼
+              ┌─────────────────────┐
+              │  SQL Server Database │
+              │     (NamCMS_DB)      │
+              └─────────────────────┘
+```
+
+Dự án được tổ chức theo mô hình **3 tầng (3-layer)**:
+
+- **CMS.Frontend** – Giao diện người dùng (React SPA)
+- **CMS.Backend** – Tầng xử lý logic & API (ASP.NET Core MVC + Web API)
+- **CMS.Data** – Tầng dữ liệu (Entity Framework Core, Entities, Migrations)
+
+---
+
+## Tính năng chính
+
+### Phía khách hàng (Frontend React)
+
+- **Trang chủ** – Hero banner, sản phẩm nổi bật, bài viết mới nhất
+- **Danh sách sản phẩm** – Tìm kiếm, lọc theo danh mục, phân trang
+- **Chi tiết sản phẩm** – Hình ảnh, mô tả, thêm vào giỏ hàng
+- **Giỏ hàng** – Thêm/xóa sản phẩm, cập nhật số lượng
+- **Thanh toán** – Nhập thông tin giao hàng, đặt hàng
+- **Blog** – Danh sách bài viết, chi tiết bài viết
+- **Đăng ký / Đăng nhập** – Tài khoản khách hàng
+- **Quản lý hồ sơ** – Cập nhật thông tin cá nhân, địa chỉ
+- **Lịch sử đơn hàng** – Xem danh sách đơn hàng đã đặt
+
+### Phía quản trị (Backend MVC)
+
+- **Quản lý sản phẩm** – CRUD sản phẩm, hình ảnh sản phẩm
+- **Quản lý danh mục** – Danh mục bài viết & danh mục sản phẩm
+- **Quản lý đơn hàng** – Xem, cập nhật trạng thái đơn hàng
+- **Quản lý bài viết** – CRUD bài viết/blog
+- **Quản lý banner** – Thêm/sửa/xóa banner quảng cáo
+- **Quản lý khách hàng** – Xem danh sách khách hàng
+- **Quản lý tài khoản Admin** – Đăng nhập, phân quyền
+
+---
+
+## Cài đặt & Chạy dự án
+
+### Yêu cầu hệ thống
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js](https://nodejs.org/) (>= 18.x)
+- [SQL Server](https://www.microsoft.com/en-us/sql-server) (hoặc SQL Server Express)
