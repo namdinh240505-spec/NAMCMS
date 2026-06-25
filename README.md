@@ -1,10 +1,16 @@
+
 # 🛒 NamCMS – Hệ thống Quản lý Nội dung & Thương mại Điện tử
+
+NamCMS – Hệ thống Quản lý Nội dung & Thương mại Điện tử
 
 > **NamCMS** là một hệ thống web fullstack kết hợp **Quản lý nội dung (CMS)** và **Thương mại điện tử (E-Commerce)**, được xây dựng bằng **ASP.NET Core 8** (Backend) và **React 19** (Frontend).
 
 ---
 
+<HEAD
 ## 📋 Mục lục
+
+860aa2d80f8e823d05f1dade6740dcb80ff15f35
 
 - [Tổng quan](#-tổng-quan)
 - [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
@@ -25,6 +31,10 @@
 |---|---|
 | 🖥️ **Trang Admin** (MVC) | Giao diện quản trị sử dụng ASP.NET MVC với Razor Views, dành cho quản lý sản phẩm, đơn hàng, bài viết, banner, danh mục, khách hàng và tài khoản. |
 | 🛍️ **Trang khách hàng** (React SPA) | Giao diện mua sắm hiện đại dành cho người dùng cuối, bao gồm trang chủ, danh sách sản phẩm, giỏ hàng, thanh toán, blog và quản lý tài khoản. |
+=======
+| **Trang Admin** (MVC) | Giao diện quản trị sử dụng ASP.NET MVC với Razor Views, dành cho quản lý sản phẩm, đơn hàng, bài viết, banner, danh mục, khách hàng và tài khoản. |
+| **Trang khách hàng** (React SPA) | Giao diện mua sắm hiện đại dành cho người dùng cuối, bao gồm trang chủ, danh sách sản phẩm, giỏ hàng, thanh toán, blog và quản lý tài khoản. |
+ 860aa2d80f8e823d05f1dade6740dcb80ff15f35
 
 Hai phần giao tiếp với nhau thông qua **RESTful API**, được thiết kế tách biệt rõ ràng giữa frontend và backend.
 
@@ -89,9 +99,13 @@ Dự án được tổ chức theo mô hình **3 tầng (3-layer)**:
 
 ---
 
+
 ## ✨ Tính năng chính
 
 ### 🛍️ Phía khách hàng (Frontend React)
+## Tính năng chính
+
+### Phía khách hàng (Frontend React)
 
 - **Trang chủ** – Hero banner, sản phẩm nổi bật, bài viết mới nhất
 - **Danh sách sản phẩm** – Tìm kiếm, lọc theo danh mục, phân trang
@@ -104,6 +118,7 @@ Dự án được tổ chức theo mô hình **3 tầng (3-layer)**:
 - **Lịch sử đơn hàng** – Xem danh sách đơn hàng đã đặt
 
 ### 🖥️ Phía quản trị (Backend MVC)
+### Phía quản trị (Backend MVC)
 
 - **Quản lý sản phẩm** – CRUD sản phẩm, hình ảnh sản phẩm
 - **Quản lý danh mục** – Danh mục bài viết & danh mục sản phẩm
@@ -116,6 +131,7 @@ Dự án được tổ chức theo mô hình **3 tầng (3-layer)**:
 ---
 
 ## 🚀 Cài đặt & Chạy dự án
+## Cài đặt & Chạy dự án
 
 ### Yêu cầu hệ thống
 
@@ -267,7 +283,3 @@ API phục vụ Frontend React, có prefix `/api/`:
 Dự án này được phát triển cho mục đích học tập và nghiên cứu.
 
 ---
-
-<p align="center">
-  ⭐ Nếu dự án hữu ích, hãy cho một <b>Star</b> trên GitHub nhé!
-</p>
