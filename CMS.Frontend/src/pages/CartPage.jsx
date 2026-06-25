@@ -36,8 +36,9 @@ export default function CartPage() {
           <div className="cart-items">
             {items.map(item => {
               const imgUrl = getImageUrl(item.imageUrl);
+              const uniqueKey = `${item.id}-${item.color || ''}`;
               return (
-                <div key={item.id} className="cart-item">
+                <div key={uniqueKey} className="cart-item">
                   <div className="cart-item-image">
                     {imgUrl ? (
                       <img src={imgUrl} alt={item.name} />
@@ -47,17 +48,20 @@ export default function CartPage() {
                   </div>
                   <div className="cart-item-info">
                     <Link to={`/products/${item.id}`} className="cart-item-name">{item.name}</Link>
-                    {item.categoryName && <div className="cart-item-category">{item.categoryName}</div>}
-                    <div className="cart-item-price">{formatPrice(item.price)}</div>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: 'var(--font-xs)', color: 'var(--gray-500)', marginTop: '4px' }}>
+                      {item.categoryName && <span className="cart-item-category" style={{ margin: 0 }}>{item.categoryName}</span>}
+                      {item.color && <span className="cart-item-color" style={{ background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>Màu: {item.color}</span>}
+                    </div>
+                    <div className="cart-item-price" style={{ marginTop: '8px' }}>{formatPrice(item.price)}</div>
                   </div>
                   <div className="cart-item-quantity">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}><FiMinus /></button>
+                    <button onClick={() => updateQuantity(item.id, item.color, item.quantity - 1)}><FiMinus /></button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}><FiPlus /></button>
+                    <button onClick={() => updateQuantity(item.id, item.color, item.quantity + 1)}><FiPlus /></button>
                   </div>
                   <button
                     className="cart-item-remove"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item.id, item.color)}
                     title="Xóa"
                   >
                     <FiTrash2 />

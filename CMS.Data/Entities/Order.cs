@@ -30,6 +30,9 @@ namespace CMS.Data.Entities
         public string? ShippingPhone { get; set; }
         public string? ShippingName { get; set; }
 
+        public string PaymentMethod { get; set; } = "COD"; // "COD" hoặc "VNPay"
+        public string? TransactionId { get; set; } // Mã giao dịch VNPay (nếu có)
+
         [ForeignKey("CustomerId")]
         public virtual Customer? Customer { get; set; }
 

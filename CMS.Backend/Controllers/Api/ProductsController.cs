@@ -81,6 +81,7 @@ namespace CMS.Backend.Controllers.Api
                     p.StockQuantity,
                     p.ImageUrl,
                     p.Brand,
+                    p.Colors,
                     p.CategoryProductId,
                     CategoryName = p.Category != null ? p.Category.Name : null,
                     Images = p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).ToList()
@@ -95,6 +96,45 @@ namespace CMS.Backend.Controllers.Api
                 pageSize,
                 totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
             });
+        }
+
+        // GET: api/products/best-sellers?limit=8
+        [HttpGet("best-sellers")]
+        public async Task<IActionResult> GetBestSellers(int limit = 8)
+        {
+            var bestSellers = await _context.OrderDetails
+                .GroupBy(od => od.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    TotalSold = g.Sum(od => od.Quantity)
+                })
+                .OrderByDescending(x => x.TotalSold)
+                .Take(limit)
+                .Join(
+                    _context.Products.Include(p => p.Category).Include(p => p.Images),
+                    bs => bs.ProductId,
+                    p => p.Id,
+                    (bs, p) => new
+                    {
+                        p.Id,
+                        p.Name,
+                        p.Description,
+                        p.Price,
+                        p.StockQuantity,
+                        p.ImageUrl,
+                        p.Brand,
+                        p.Colors,
+                        p.CategoryProductId,
+                        CategoryName = p.Category != null ? p.Category.Name : null,
+                        Images = p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).ToList(),
+                        bs.TotalSold
+                    }
+                )
+                .OrderByDescending(x => x.TotalSold)
+                .ToListAsync();
+
+            return Ok(bestSellers);
         }
 
         // GET: api/products/brands — Get all distinct brands
@@ -132,6 +172,7 @@ namespace CMS.Backend.Controllers.Api
                     p.StockQuantity,
                     p.ImageUrl,
                     p.Brand,
+                    p.Colors,
                     p.CategoryProductId,
                     CategoryName = p.Category != null ? p.Category.Name : null,
                     Images = p.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).ToList()

@@ -8,7 +8,7 @@
     <div class="page-header">
         <div>
             <h2>Chỉnh sửa banner</h2>
-            <div class="subtitle">Cập nhật thông tin hoặc thay đổi ảnh quảng cáo</div>
+            <div class="subtitle">Cập nhật nội dung hoặc thay đổi ảnh slide — ID: #@Model.Id</div>
         </div>
     </div>
 
@@ -21,39 +21,79 @@
 
                     <div class="cyber-form-group">
                         <label class="cyber-label">Tiêu đề banner <span class="text-danger">*</span></label>
-                        <input asp-for="Title" class="cyber-input" placeholder="Nhập tiêu đề banner quảng cáo..." />
+                        <input asp-for="Title" class="cyber-input" placeholder="Ví dụ: Bộ sưu tập mùa hè 2026" />
                         <span asp-validation-for="Title" class="text-danger"></span>
+                        <small class="text-muted mt-1 d-block">
+                            Tiêu đề sẽ hiển thị lớn ở giữa banner. Nên ngắn gọn, 2–4 từ mỗi dòng.
+                        </small>
                     </div>
 
                     <div class="cyber-form-group">
-                        <label class="cyber-label">Mô tả ngắn</label>
-                        <textarea asp-for="Description" class="cyber-input" rows="3"
-                                  placeholder="Nhập mô tả ngắn hiển thị kèm theo banner (nếu có)..."></textarea>
+                        <label class="cyber-label">Mô tả ngắn (phụ đề)</label>
+                        <textarea asp-for="Description" class="cyber-input" rows="2"
+                                  placeholder="Ví dụ: Ưu đãi lên đến 50%"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
+                        <small class="text-muted mt-1 d-block">Hiển thị như badge nhỏ phía trên tiêu đề. Để trống nếu không cần.</small>
                     </div>
 
+                    @* ===== CURRENT IMAGE PREVIEW ===== *@
                     <div class="cyber-form-group">
                         <label class="cyber-label">Ảnh banner hiện tại</label>
-                        <div class="mb-3 mt-1">
+                        <div style="margin-top: 8px; margin-bottom: 16px;">
                             @if (!string.IsNullOrEmpty(Model.ImageUrl))
                             {
-                                <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 100%; max-height: 200px; border-radius: 6px; border: 1px solid var(--border-color, #ccc);" />
+                                <div style="position: relative; aspect-ratio: 16/9; max-width: 100%; border-radius: 8px; overflow: hidden; border: 2px solid var(--border-color, #333); background: #111;">
+                                    <img src="@Model.ImageUrl" alt="@Model.Title" id="currentImage"
+                                         style="width: 100%; height: 100%; object-fit: cover;" />
+                                    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.7) 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;">
+                                        @if (!string.IsNullOrEmpty(Model.Description))
+                                        {
+                                            <span style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 4px 16px; border-radius: 999px; font-size: 0.75rem; color: rgba(255,255,255,0.9); text-transform: uppercase; letter-spacing: 0.08em;">@Model.Description</span>
+                                        }
+                                        <span style="color: #fff; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 12px rgba(0,0,0,0.5); white-space: pre-line; text-align: center; line-height: 1.1;">@Model.Title</span>
+                                        <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                            <span style="background: #fff; color: #111; padding: 6px 18px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Khám phá ngay →</span>
+                                            <span style="border: 1px solid rgba(255,255,255,0.5); color: #fff; padding: 6px 18px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">Tất cả sản phẩm</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="fa-solid fa-expand"></i> Đây là cách ảnh sẽ hiển thị trên trang chủ (toàn màn hình)
+                                </small>
                             }
                             else
                             {
-                                <span class="text-muted">Chưa có ảnh banner</span>
+                                <div style="aspect-ratio: 16/9; max-width: 100%; border-radius: 8px; overflow: hidden; border: 2px dashed var(--border-color, #333); background: #111; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: var(--text-muted, #666);">Chưa có ảnh banner</span>
+                                </div>
                             }
                         </div>
-                        <label class="cyber-label">Thay đổi ảnh banner (Chọn nếu muốn đổi ảnh khác)</label>
-                        <input type="file" name="ImageFile" accept="image/*" class="cyber-input" />
+
+                        <label class="cyber-label">Thay đổi ảnh banner <small class="text-muted">(bỏ trống để giữ ảnh hiện tại)</small></label>
+                        <input type="file" name="ImageFile" accept="image/*" class="cyber-input" id="bannerImageInput" />
                         <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                        <small class="text-muted mt-1 d-block">Định dạng khuyên dùng: .jpg, .png, .webp (Bỏ trống nếu muốn giữ nguyên ảnh hiện tại).</small>
+                        <small class="text-muted mt-1 d-block">
+                            <i class="fa-solid fa-circle-info" style="color: var(--accent-primary, #00f0ff);"></i>
+                            <strong>Kích thước khuyên dùng: 1920×1080px</strong> (tỷ lệ 16:9). Định dạng: .jpg, .png, .webp
+                        </small>
+
+                        @* New image preview *@
+                        <div id="newImagePreviewWrapper" style="display: none; margin-top: 12px;">
+                            <label class="cyber-label" style="font-size: 0.85rem; margin-bottom: 6px;">
+                                <i class="fa-solid fa-image" style="color: var(--accent-primary, #00f0ff);"></i> Ảnh mới:
+                            </label>
+                            <div style="aspect-ratio: 16/9; max-width: 100%; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; background: #111;">
+                                <img id="newImagePreview" src="" alt="Preview"
+                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="cyber-form-group">
-                        <label class="cyber-label">Liên kết (Link URL)</label>
-                        <input asp-for="LinkUrl" class="cyber-input" placeholder="Ví dụ: /products, https://google.com..." />
+                        <label class="cyber-label">Liên kết khi bấm nút "Khám phá"</label>
+                        <input asp-for="LinkUrl" class="cyber-input" placeholder="Ví dụ: /products hoặc /products?categoryId=1" />
                         <span asp-validation-for="LinkUrl" class="text-danger"></span>
+                        <small class="text-muted mt-1 d-block">Mặc định sẽ chuyển đến trang sản phẩm nếu để trống.</small>
                     </div>
 
                     <div class="row">
@@ -61,18 +101,20 @@
                             <div class="cyber-form-group">
                                 <label class="cyber-label">Vị trí hiển thị</label>
                                 <select asp-for="Position" class="cyber-input">
-                                    <option value="HomeHero">Home Hero (Trang chủ chính)</option>
-                                    <option value="Sidebar">Sidebar (Cột phụ)</option>
-                                    <option value="MiddleBanner">Middle Banner (Banner giữa trang)</option>
+                                    <option value="HomeHero">🏠 Home Hero (Slideshow trang chủ)</option>
+                                    <option value="Sidebar">📐 Sidebar (Cột phụ)</option>
+                                    <option value="MiddleBanner">📄 Middle Banner (Banner giữa trang)</option>
                                 </select>
                                 <span asp-validation-for="Position" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="cyber-form-group">
-                                <label class="cyber-label">Thứ tự hiển thị</label>
-                                <input asp-for="SortOrder" type="number" class="cyber-input" placeholder="Nhập số thứ tự (ví dụ: 0, 1, 2...)" />
+                                <label class="cyber-label">Thứ tự slide</label>
+                                <input asp-for="SortOrder" type="number" class="cyber-input" min="0"
+                                       placeholder="0 = hiển thị đầu tiên" />
                                 <span asp-validation-for="SortOrder" class="text-danger"></span>
+                                <small class="text-muted mt-1 d-block">Slide có số nhỏ hơn sẽ hiển thị trước.</small>
                             </div>
                         </div>
                     </div>
@@ -80,7 +122,7 @@
                     <div class="cyber-form-group">
                         <div class="form-check form-switch mt-2">
                             <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveSwitch" style="cursor: pointer;">
-                            <label class="form-check-label cyber-label" for="isActiveSwitch" style="padding-left: 10px; cursor: pointer; display: inline-block;">Kích hoạt hiển thị</label>
+                            <label class="form-check-label cyber-label" for="isActiveSwitch" style="padding-left: 10px; cursor: pointer; display: inline-block;">Kích hoạt hiển thị trên website</label>
                         </div>
                         <span asp-validation-for="IsActive" class="text-danger"></span>
                     </div>
@@ -103,4 +145,23 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        // Live image preview for new upload
+        document.getElementById('bannerImageInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const wrapper = document.getElementById('newImagePreviewWrapper');
+            const preview = document.getElementById('newImagePreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    preview.src = ev.target.result;
+                    wrapper.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                wrapper.style.display = 'none';
+            }
+        });
+    </script>
 }

@@ -56,7 +56,7 @@ export default function Header() {
             <div className="header-logo-icon">
               <HiOutlineBolt />
             </div>
-            Nam<span>Tech</span>
+            Viin<span>Shop</span>
           </Link>
 
           <nav className="header-nav">

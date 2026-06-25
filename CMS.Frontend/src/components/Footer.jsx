@@ -25,14 +25,6 @@ export default function Footer() {
           </div>
 
           <div className="footer-section">
-            <h4>Cửa hàng</h4>
-            <Link to="/products">Tất cả sản phẩm</Link>
-            <Link to="/products?categoryId=1">Điện thoại</Link>
-            <Link to="/products?categoryId=2">Laptop</Link>
-            <Link to="/products?categoryId=3">Phụ kiện</Link>
-          </div>
-
-          <div className="footer-section">
             <h4>Hỗ trợ</h4>
             <Link to="/blog">Tin tức</Link>
             <a href="#policy">Chính sách đổi trả</a>
@@ -49,8 +41,8 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 <span>NamTech</span>. All rights reserved.</p>
-          <p>Powered by NamCMS</p>
+          <p>© 2026 <span>ViinShop</span>. All rights reserved.</p>
+          <p>Powered by Viin </p>
         </div>
       </div>
     </footer>

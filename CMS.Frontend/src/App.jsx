@@ -15,6 +15,8 @@ import OrdersPage from './pages/OrdersPage';
 import ProfilePage from './pages/ProfilePage';
 import BlogPage from './pages/BlogPage';
 import BlogDetailPage from './pages/BlogDetailPage';
+import VnPayReturnPage from './pages/VnPayReturnPage';
+import ChatBubble from './components/ChatBubble';
 import './App.css';
 
 function App() {
@@ -37,9 +39,11 @@ function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogDetailPage />} />
+                <Route path="/vnpay-return" element={<VnPayReturnPage />} />
               </Routes>
             </main>
             <Footer />
+            <ChatBubble />
             <Toaster position="bottom-right" />
           </div>
         </CartProvider>

@@ -20,5 +20,6 @@ namespace CMS.Data
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
     }
 }

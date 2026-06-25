@@ -25,6 +25,8 @@ namespace CMS.Data.Entities
 
         public string? Brand { get; set; }
 
+        public string? Colors { get; set; }
+
         public int CategoryProductId { get; set; }
 
         [ForeignKey("CategoryProductId")]

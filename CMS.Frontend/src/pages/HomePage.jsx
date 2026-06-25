@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { FiArrowRight, FiGrid, FiTruck, FiShield, FiHeadphones, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiArrowRight, FiGrid, FiTruck, FiShield, FiHeadphones, FiChevronLeft, FiChevronRight, FiTrendingUp } from 'react-icons/fi';
 import Hero from '../components/Hero';
 import ProductCard, { ProductCardSkeleton } from '../components/ProductCard';
-import { getProducts, getCategories, getPosts, getImageUrl } from '../api';
+import { getProducts, getCategories, getPosts, getBestSellers, getImageUrl } from '../api';
 import '../styles/ProductList.css';
 
 const PRODUCTS_PER_PAGE = 8;
@@ -11,6 +11,7 @@ const PRODUCTS_PER_PAGE = 8;
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -22,12 +23,14 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchStaticData() {
       try {
-        const [catRes, postRes] = await Promise.all([
+        const [catRes, postRes, bestRes] = await Promise.all([
           getCategories(),
           getPosts({ pageSize: 3 }),
+          getBestSellers(8),
         ]);
         setCategories(catRes || []);
         setPosts(postRes.data || []);
+        setBestSellers(bestRes || []);
       } catch (err) {
         console.error('Error loading homepage:', err);
       }
@@ -130,52 +133,61 @@ export default function HomePage() {
 
       {/* Categories */}
       {categories.length > 0 && (
-        <section style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)' }}>
+        <section style={{ padding: 'var(--space-16) 0', background: 'var(--white)' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
-              <h2 className="section-title">Danh mục sản phẩm</h2>
-              <p className="section-subtitle">Khám phá theo danh mục yêu thích</p>
+              <h2 style={{
+                fontSize: '2rem',
+                fontWeight: '700',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: 'var(--gray-900)',
+                margin: 0
+              }}>
+                DANH MỤC SẢN PHẨM
+              </h2>
             </div>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-              gap: 'var(--space-4)'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: 'var(--space-6)'
             }}>
               {categories.map(cat => (
                 <Link
                   key={cat.id}
                   to={`/products?categoryId=${cat.id}`}
                   style={{
-                    display: 'flex', flexDirection: 'column', alignItems: 'center',
-                    padding: 'var(--space-8) var(--space-4)',
-                    background: 'var(--white)', borderRadius: 'var(--radius-lg)',
-                    border: '1px solid var(--gray-100)', transition: 'all 0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: '0px',
+                    overflow: 'hidden',
                     textDecoration: 'none',
+                    transition: 'transform 0.3s ease',
                   }}
-                  className="fade-in"
-                  onMouseOver={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-                    e.currentTarget.style.borderColor = 'var(--orange-200)';
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.borderColor = 'var(--gray-100)';
-                  }}
+                  onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseOut={e => e.currentTarget.style.transform = 'none'}
                 >
-                  <div style={{
-                    width: 56, height: 56, borderRadius: 'var(--radius-md)',
-                    background: 'var(--primary-gradient)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.5rem', color: 'white', marginBottom: 'var(--space-4)'
-                  }}>
-                    <FiGrid />
+                  <div style={{ aspectRatio: '4/3', overflow: 'hidden', background: '#f7f7f7' }}>
+                    {cat.imageUrl ? (
+                      <img src={getImageUrl(cat.imageUrl)} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: 'var(--gray-300)' }}>
+                        <FiGrid />
+                      </div>
+                    )}
                   </div>
-                  <h3 style={{ fontWeight: 700, color: 'var(--gray-800)', marginBottom: 'var(--space-1)' }}>{cat.name}</h3>
-                  <p style={{ fontSize: 'var(--font-sm)', color: 'var(--gray-500)' }}>
-                    {cat.productCount} sản phẩm
-                  </p>
+                  <div style={{
+                    background: '#ffff',
+                    color: 'black',
+                    textAlign: 'center',
+                    padding: '14px 0',
+                    fontWeight: '700',
+                    fontSize: '16px',
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase'
+                  }}>
+                    {cat.name}
+                  </div>
                 </Link>
               ))}
             </div>
@@ -183,25 +195,61 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Featured Products */}
-      <section id="featured-products" style={{ padding: 'var(--space-16) 0' }}>
-        <div className="container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-8)' }}>
-            <div>
-              <h2 className="section-title">Sản phẩm nổi bật</h2>
-              <p style={{ color: 'var(--gray-500)' }}>
-                {totalCount > 0
-                  ? `Hiển thị ${(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–${Math.min(currentPage * PRODUCTS_PER_PAGE, totalCount)} / ${totalCount} sản phẩm`
-                  : 'Sản phẩm được yêu thích nhất'}
-              </p>
+      {/* Best Sellers */}
+      {bestSellers.length > 0 && (
+        <section id="best-sellers" style={{ padding: 'var(--space-16) 0', background: 'var(--white)' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
+              <h2 style={{
+                fontSize: '2rem',
+                fontWeight: '700',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: 'var(--gray-900)',
+                margin: 0
+              }}>
+                SẢN PHẨM BÁN CHẠY!
+              </h2>
             </div>
-            <Link to="/products" className="btn btn-secondary btn-sm">
-              Xem tất cả <FiArrowRight />
-            </Link>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gap: 'var(--space-6)',
+              marginBottom: 'var(--space-16)'
+            }}>
+              {bestSellers.map((p) => (
+                <div key={p.id} style={{ position: 'relative' }}>
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Products */}
+      <section id="featured-products" style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
+            <h2 style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: 'var(--gray-900)',
+              margin: '0 0 var(--space-2) 0'
+            }}>
+              SẢN PHẨM NỔI BẬT!
+            </h2>
+            <p style={{ color: 'var(--gray-500)', margin: 0 }}>
+              {totalCount > 0
+                ? `Hiển thị ${(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–${Math.min(currentPage * PRODUCTS_PER_PAGE, totalCount)} / ${totalCount} sản phẩm`
+                : 'Sản phẩm được yêu thích nhất'}
+            </p>
           </div>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
             gap: 'var(--space-6)',
             minHeight: 320,
             opacity: productsLoading ? 0.6 : 1,
@@ -255,67 +303,71 @@ export default function HomePage() {
       </section>
 
       {/* Blog Preview */}
-      {posts.length > 0 && (
-        <section style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)' }}>
-          <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-8)' }}>
-              <div>
-                <h2 className="section-title">Tin tức mới nhất</h2>
-                <p style={{ color: 'var(--gray-500)' }}>Cập nhật xu hướng công nghệ</p>
-              </div>
-              <Link to="/blog" className="btn btn-secondary btn-sm">
-                Xem tất cả <FiArrowRight />
-              </Link>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: 'var(--space-6)'
+      <section id="featured-products" style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
+            <h2 style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: 'var(--gray-900)',
+              margin: '0 0 var(--space-2) 0'
             }}>
-              {posts.map(post => (
-                <Link
-                  key={post.id}
-                  to={`/blog/${post.id}`}
-                  style={{
-                    background: 'var(--white)', borderRadius: 'var(--radius-lg)',
-                    overflow: 'hidden', border: '1px solid var(--gray-100)',
-                    transition: 'all 0.3s', textDecoration: 'none',
-                  }}
-                  onMouseOver={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
-                  }}
-                  onMouseOut={e => {
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  {post.imageUrl && (
-                    <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
-                      <img
-                        src={getImageUrl(post.imageUrl)}
-                        alt={post.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    </div>
-                  )}
-                  <div style={{ padding: 'var(--space-5)' }}>
-                    <p style={{ fontSize: 'var(--font-xs)', color: 'var(--gray-500)', marginBottom: 'var(--space-2)' }}>
-                      {formatDate(post.createdDate)} {post.categoryName && `• ${post.categoryName}`}
-                    </p>
-                    <h3 style={{ fontWeight: 700, color: 'var(--gray-900)', marginBottom: 'var(--space-2)', lineHeight: 1.4 }}>
-                      {post.title}
-                    </h3>
-                    <p style={{ fontSize: 'var(--font-sm)', color: 'var(--gray-500)', lineHeight: 1.6 }}>
-                      {post.summary}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              TIN TỨC MỚI NHẤT!
+            </h2>
+            <Link to="/blog" className="btn btn-secondary btn-sm">
+              Xem tất cả <FiArrowRight />
+            </Link>
           </div>
-        </section>
-      )}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: 'var(--space-6)'
+          }}>
+            {posts.map(post => (
+              <Link
+                key={post.id}
+                to={`/blog/${post.id}`}
+                style={{
+                  background: 'var(--white)', borderRadius: 'var(--radius-lg)',
+                  overflow: 'hidden', border: '1px solid var(--gray-100)',
+                  transition: 'all 0.3s', textDecoration: 'none',
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = 'var(--shadow-xl)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                {post.imageUrl && (
+                  <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
+                    <img
+                      src={getImageUrl(post.imageUrl)}
+                      alt={post.title}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                )}
+                <div style={{ padding: 'var(--space-5)' }}>
+                  <p style={{ fontSize: 'var(--font-xs)', color: 'var(--gray-500)', marginBottom: 'var(--space-2)' }}>
+                    {formatDate(post.createdDate)} {post.categoryName && `• ${post.categoryName}`}
+                  </p>
+                  <h3 style={{ fontWeight: 700, color: 'var(--gray-900)', marginBottom: 'var(--space-2)', lineHeight: 1.4 }}>
+                    {post.title}
+                  </h3>
+                  <p style={{ fontSize: 'var(--font-sm)', color: 'var(--gray-500)', lineHeight: 1.6 }}>
+                    {post.summary}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

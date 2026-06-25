@@ -25,6 +25,7 @@ namespace CMS.Backend.Controllers.Api
                     c.Id,
                     c.Name,
                     c.Description,
+                    c.ImageUrl,
                     ProductCount = c.Products != null ? c.Products.Count : 0
                 })
                 .ToListAsync();

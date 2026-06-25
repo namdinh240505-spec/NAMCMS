@@ -16,13 +16,25 @@ export default function ProductDetailPage() {
   const [isFading, setIsFading] = useState(false);
   const { addToCart } = useCart();
   const intervalRef = useRef(null);
+  const availableColors = data?.product?.colors 
+    ? data.product.colors.split(',').map(c => c.trim()).filter(Boolean)
+    : ['Đen', 'Trắng', 'Vàng', 'Đỏ'];
+  const [selectedColor, setSelectedColor] = useState(availableColors[0] || 'Đen');
 
   useEffect(() => {
     setLoading(true);
     setQuantity(1);
     setCurrentImageIndex(0);
     getProductById(id)
-      .then(setData)
+      .then(res => {
+        setData(res);
+        if (res?.product?.colors) {
+          const colors = res.product.colors.split(',').map(c => c.trim()).filter(Boolean);
+          if (colors.length > 0) {
+            setSelectedColor(colors[0]);
+          }
+        }
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -102,8 +114,9 @@ export default function ProductDetailPage() {
       price: p.price,
       imageUrl: p.imageUrl,
       categoryName: p.categoryName,
+      color: selectedColor,
     }, quantity);
-    toast.success(`Đã thêm ${quantity}x "${p.name}" vào giỏ hàng!`, {
+    toast.success(`Đã thêm ${quantity}x "${p.name}" (Màu: ${selectedColor}) vào giỏ hàng!`, {
       style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
       iconTheme: { primary: '#F97316', secondary: '#fff' },
     });
@@ -219,6 +232,22 @@ export default function ProductDetailPage() {
 
             {product.stockQuantity > 0 && (
               <>
+                <div className="color-selector">
+                  <span className="color-selector-label">Màu sắc:</span>
+                  <div className="color-swatches">
+                    {availableColors.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`color-swatch-btn ${selectedColor === color ? 'active' : ''}`}
+                        onClick={() => setSelectedColor(color)}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="quantity-selector">
                   <label>Số lượng:</label>
                   <div className="quantity-controls">

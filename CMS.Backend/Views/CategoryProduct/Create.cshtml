@@ -15,7 +15,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-7 col-md-9">
             <div class="cyber-form-container">
-                <form asp-action="Create" method="post">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
                     <div class="cyber-form-group">
@@ -29,6 +29,11 @@
                         <textarea asp-for="Description" class="cyber-input" rows="4"
                                   placeholder="Nhập mô tả danh mục..."></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="cyber-form-group">
+                        <label class="cyber-label">Hình ảnh danh mục</label>
+                        <input type="file" name="ImageFile" accept="image/*" class="cyber-input" />
                     </div>
 
                     <div class="cyber-form-actions">

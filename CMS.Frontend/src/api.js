@@ -33,6 +33,10 @@ export const getProductStock = (id) => {
   return request(`/api/products/${id}/stock`);
 };
 
+export const getBestSellers = (limit = 8) => {
+  return request(`/api/products/best-sellers?limit=${limit}`);
+};
+
 // Categories
 export const getCategories = () => {
   return request('/api/categories');
@@ -105,6 +109,10 @@ export const getCustomerOrders = (customerId) => {
   return request(`/api/orders/customer/${customerId}`);
 };
 
+export const verifyVnPayReturn = (queryString) => {
+  return request(`/api/orders/vnpay-return?${queryString}`);
+};
+
 // Posts (Blog)
 export const getPosts = (params = {}) => {
   const query = new URLSearchParams(params).toString();
@@ -118,6 +126,28 @@ export const getPostById = (id) => {
 // Banners
 export const getBanners = (position = 'HomeHero') => {
   return request(`/api/banners?position=${position}`);
+};
+
+// Chat
+export const getChatMessages = (customerId) => {
+  return request(`/api/chat/${customerId}`);
+};
+
+export const sendChatMessage = (customerId, content) => {
+  return request('/api/chat', {
+    method: 'POST',
+    body: JSON.stringify({ customerId, content }),
+  });
+};
+
+export const getUnreadChatCount = (customerId) => {
+  return request(`/api/chat/${customerId}/unread-count`);
+};
+
+export const markChatAsRead = (customerId) => {
+  return request(`/api/chat/${customerId}/mark-read`, {
+    method: 'POST',
+  });
 };
 
 // Helper: get full image URL

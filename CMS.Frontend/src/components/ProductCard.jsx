@@ -151,6 +151,11 @@ export default function ProductCard({ product, showStockTooltip = false }) {
     );
   };
 
+  // Calculate simulated discount for visual match
+  const discountPercent = product.id % 3 === 0 ? 15 : (product.id % 2 === 0 ? 10 : 0);
+  const isNew = product.id % 5 === 0 && discountPercent === 0;
+  const originalPrice = discountPercent > 0 ? product.price / (1 - discountPercent / 100) : null;
+
   return (
     <Link
       to={`/products/${product.id}`}
@@ -173,12 +178,15 @@ export default function ProductCard({ product, showStockTooltip = false }) {
             <FiPackage />
           </div>
         )}
-        {product.categoryName && (
-          <span className="product-card-category">{product.categoryName}</span>
+        
+        {/* Vans-style badges */}
+        {discountPercent > 0 && (
+          <span className="product-badge badge-discount">-{discountPercent}%</span>
         )}
-        <span className={`product-card-stock ${product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'}`}>
-          {product.stockQuantity > 0 ? 'Còn hàng' : 'Hết hàng'}
-        </span>
+        {isNew && (
+          <span className="product-badge badge-new">New</span>
+        )}
+
         {hasMultipleImages && (
           <div className="product-card-dots">
             {images.map((_, i) => (
@@ -227,20 +235,11 @@ export default function ProductCard({ product, showStockTooltip = false }) {
       </div>
       <div className="product-card-body">
         <h3 className="product-card-name">{product.name}</h3>
-        {renderRatingStars()}
-        {product.description && (
-          <p className="product-card-desc">{product.description}</p>
-        )}
-        <div className="product-card-footer">
-          <span className="product-card-price">{formatPrice(product.price)}</span>
-          {product.stockQuantity > 0 && (
-            <button
-              className="product-card-add-btn"
-              onClick={handleAdd}
-              title="Thêm vào giỏ hàng"
-            >
-              <FiPlus />
-            </button>
+        <div className="product-card-brand">{product.brand || 'VANS'}</div>
+        <div className="product-card-price-container">
+          <span className="product-card-price sale-price">{formatPrice(product.price)}</span>
+          {originalPrice && (
+            <span className="product-card-original-price">{formatPrice(originalPrice)}</span>
           )}
         </div>
       </div>

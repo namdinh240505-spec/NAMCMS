@@ -10,6 +10,7 @@ export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const { customer, isLoggedIn } = useAuth();
   const [notes, setNotes] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('COD');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState('');
@@ -105,6 +106,7 @@ export default function CheckoutPage() {
         shippingAddress: selectedAddress.addressLine,
         shippingPhone: selectedAddress.receiverPhone,
         shippingName: selectedAddress.receiverName,
+        paymentMethod,
         items: items.map(item => ({
           productId: item.id,
           quantity: item.quantity,
@@ -112,8 +114,12 @@ export default function CheckoutPage() {
       };
 
       const result = await createOrder(orderData);
-      setSuccess(result.orderId);
       clearCart();
+      if (result.vnpayUrl) {
+        window.location.href = result.vnpayUrl;
+      } else {
+        setSuccess(result.orderId);
+      }
     } catch (err) {
       setError(err.message || 'Có lỗi xảy ra khi đặt hàng.');
     } finally {
@@ -169,6 +175,41 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               )}
+
+              <div className="form-group" style={{ marginBottom: '24px' }}>
+                <label style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '12px', display: 'block' }}>Phương thức thanh toán</label>
+                <div className="payment-methods-list" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <label className={`checkout-address-option ${paymentMethod === 'COD' ? 'active' : ''}`} style={{ display: 'flex', alignItems: 'flex-start', padding: '16px', gap: '12px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="COD"
+                      checked={paymentMethod === 'COD'}
+                      onChange={() => setPaymentMethod('COD')}
+                      style={{ marginTop: '4px' }}
+                    />
+                    <div className="address-option-details">
+                      <span className="address-option-name" style={{ fontSize: '0.95rem', fontWeight: 700 }}>Thanh toán khi nhận hàng (COD)</span>
+                      <span className="address-option-line" style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>Thanh toán bằng tiền mặt khi nhận hàng tận nơi.</span>
+                    </div>
+                  </label>
+
+                  <label className={`checkout-address-option ${paymentMethod === 'VNPay' ? 'active' : ''}`} style={{ display: 'flex', alignItems: 'flex-start', padding: '16px', gap: '12px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="VNPay"
+                      checked={paymentMethod === 'VNPay'}
+                      onChange={() => setPaymentMethod('VNPay')}
+                      style={{ marginTop: '4px' }}
+                    />
+                    <div className="address-option-details">
+                      <span className="address-option-name" style={{ fontSize: '0.95rem', fontWeight: 700 }}>Thanh toán trực tuyến qua VNPay (NCB Test Card)</span>
+                      <span className="address-option-line" style={{ fontSize: '0.85rem', color: 'var(--gray-500)' }}>Hỗ trợ thẻ ATM nội địa, thẻ quốc tế Visa/Mastercard hoặc quét mã QR.</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
 
               <div className="form-group">
                 <label>Ghi chú đơn hàng</label>

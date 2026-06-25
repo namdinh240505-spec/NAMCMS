@@ -8,23 +8,62 @@
     <div class="page-header">
         <div>
             <h2>Xác nhận xóa banner</h2>
-            <div class="subtitle text-danger">Hành động này không thể hoàn tác! Bạn có chắc chắn muốn xóa banner này?</div>
+            <div class="subtitle text-danger">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Hành động này không thể hoàn tác! Slide này sẽ bị xóa khỏi trang chủ.
+            </div>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
+        <div class="col-lg-7 col-md-9">
             <div class="cyber-form-container border border-danger">
-                <div class="mb-4 text-center">
+
+                @* Banner preview in 16:9 *@
+                <div style="margin-bottom: 1.5rem;">
                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                     {
-                        <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 100%; max-height: 200px; border-radius: 6px; border: 1px solid var(--border-color, #ccc); margin-bottom: 20px;" />
+                        <div style="position: relative; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; border: 2px solid #ef4444; background: #111;">
+                            <img src="@Model.ImageUrl" alt="@Model.Title"
+                                 style="width: 100%; height: 100%; object-fit: cover; opacity: 0.6;" />
+                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;">
+                                <i class="fa-solid fa-trash" style="font-size: 2.5rem; color: #ef4444; opacity: 0.8;"></i>
+                                <span style="color: #ef4444; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Sẽ bị xóa</span>
+                            </div>
+                        </div>
                     }
-                    <h3 class="text-white">@Model.Title</h3>
-                    <p class="text-muted">Vị trí: <span class="badge bg-secondary">@Model.Position</span></p>
                 </div>
 
-                <div class="d-flex justify-content-center" style="gap: var(--space-4);">
+                @* Banner info *@
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--text-primary, #e0e0e0); font-size: 1.3rem; margin-bottom: 8px;">@Model.Title</h3>
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <p style="color: var(--text-muted, #888); font-size: 0.9rem; margin-bottom: 8px;">@Model.Description</p>
+                    }
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span class="badge bg-secondary" style="font-size: 0.75rem;">@Model.Position</span>
+                        <span class="badge bg-secondary" style="font-size: 0.75rem;">Thứ tự: @Model.SortOrder</span>
+                        @if (Model.IsActive)
+                        {
+                            <span class="badge bg-success" style="font-size: 0.75rem;">Đang hiển thị</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger" style="font-size: 0.75rem;">Đang ẩn</span>
+                        }
+                    </div>
+                </div>
+
+                @* Warning message *@
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; text-align: center;">
+                    <p style="color: #fca5a5; font-size: 0.9rem; margin: 0;">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        Banner này sẽ bị xóa vĩnh viễn khỏi hệ thống và slideshow trang chủ.
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-center" style="gap: var(--space-4, 1rem);">
                     <form asp-action="Delete" method="post">
                         <input type="hidden" asp-for="Id" />
                         <button type="submit" class="btn-cyber btn-cyber-danger">
