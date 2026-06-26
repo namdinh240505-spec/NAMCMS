@@ -10,10 +10,12 @@ namespace CMS.Backend.Controllers.Api
     public class CustomerAuthController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly Helpers.EmailService _emailService;
 
-        public CustomerAuthController(ApplicationDbContext context)
+        public CustomerAuthController(ApplicationDbContext context, Helpers.EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // POST: api/customerauth/register
@@ -90,6 +92,137 @@ namespace CMS.Backend.Controllers.Api
                     customer.Address
                 }
             });
+        }
+
+        // ==========================================
+        // QUÊN MẬT KHẨU — Bước 1: Gửi mã OTP
+        // ==========================================
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest(new { message = "Vui lòng nhập email." });
+            }
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Email == request.Email);
+            if (customer == null)
+            {
+                return BadRequest(new { message = "Email không tồn tại trong hệ thống." });
+            }
+
+            // Tạo mã OTP 6 số
+            var random = new Random();
+            var code = random.Next(100000, 999999).ToString();
+
+            // Vô hiệu hóa các mã cũ chưa dùng
+            var oldTokens = await _context.PasswordResetTokens
+                .Where(t => t.Email == request.Email && !t.IsUsed)
+                .ToListAsync();
+            foreach (var t in oldTokens)
+            {
+                t.IsUsed = true;
+            }
+
+            // Lưu mã mới
+            var token = new PasswordResetToken
+            {
+                Email = request.Email,
+                Code = code,
+                ExpiresAt = DateTime.Now.AddMinutes(15),
+                IsUsed = false
+            };
+            _context.PasswordResetTokens.Add(token);
+            await _context.SaveChangesAsync();
+
+            // Gửi email
+            try
+            {
+                await _emailService.SendPasswordResetEmailAsync(request.Email, code);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[EMAIL ERROR] {ex.Message}");
+                return StatusCode(500, new { message = "Không thể gửi email. Vui lòng kiểm tra cấu hình email server." });
+            }
+
+            return Ok(new { message = "Mã xác thực đã được gửi đến email của bạn." });
+        }
+
+        // ==========================================
+        // QUÊN MẬT KHẨU — Bước 2: Xác thực mã OTP
+        // ==========================================
+        [HttpPost("verify-reset-code")]
+        public async Task<IActionResult> VerifyResetCode([FromBody] VerifyResetCodeRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Code))
+            {
+                return BadRequest(new { message = "Vui lòng nhập email và mã xác thực." });
+            }
+
+            var token = await _context.PasswordResetTokens
+                .Where(t => t.Email == request.Email && t.Code == request.Code && !t.IsUsed)
+                .OrderByDescending(t => t.Id)
+                .FirstOrDefaultAsync();
+
+            if (token == null)
+            {
+                return BadRequest(new { message = "Mã xác thực không chính xác." });
+            }
+
+            if (token.ExpiresAt < DateTime.Now)
+            {
+                return BadRequest(new { message = "Mã xác thực đã hết hạn. Vui lòng yêu cầu mã mới." });
+            }
+
+            return Ok(new { message = "Mã xác thực hợp lệ.", valid = true });
+        }
+
+        // ==========================================
+        // QUÊN MẬT KHẨU — Bước 3: Đặt mật khẩu mới
+        // ==========================================
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) ||
+                string.IsNullOrWhiteSpace(request.Code) ||
+                string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                return BadRequest(new { message = "Vui lòng nhập đầy đủ thông tin." });
+            }
+
+            if (request.NewPassword.Length < 6)
+            {
+                return BadRequest(new { message = "Mật khẩu mới phải có ít nhất 6 ký tự." });
+            }
+
+            var token = await _context.PasswordResetTokens
+                .Where(t => t.Email == request.Email && t.Code == request.Code && !t.IsUsed)
+                .OrderByDescending(t => t.Id)
+                .FirstOrDefaultAsync();
+
+            if (token == null || token.ExpiresAt < DateTime.Now)
+            {
+                return BadRequest(new { message = "Mã xác thực không hợp lệ hoặc đã hết hạn." });
+            }
+
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Email == request.Email);
+            if (customer == null)
+            {
+                return BadRequest(new { message = "Tài khoản không tồn tại." });
+            }
+
+            // Cập nhật mật khẩu
+            customer.Password = request.NewPassword;
+            token.IsUsed = true;
+
+            _context.Customers.Update(customer);
+            _context.PasswordResetTokens.Update(token);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập với mật khẩu mới." });
         }
 
         // GET: api/customerauth/profile/5
@@ -294,5 +427,23 @@ namespace CMS.Backend.Controllers.Api
         public string ReceiverPhone { get; set; } = string.Empty;
         public string AddressLine { get; set; } = string.Empty;
         public bool IsDefault { get; set; } = false;
+    }
+
+    public class ForgotPasswordRequest
+    {
+        public string Email { get; set; } = string.Empty;
+    }
+
+    public class VerifyResetCodeRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

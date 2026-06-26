@@ -242,6 +242,11 @@ export default function ProductCard({ product, showStockTooltip = false }) {
             <span className="product-card-original-price">{formatPrice(originalPrice)}</span>
           )}
         </div>
+        {product.totalSold !== undefined && product.totalSold !== null && (
+          <div className="product-card-sold">
+            Đã bán: {product.totalSold}
+          </div>
+        )}
       </div>
     </Link>
   );

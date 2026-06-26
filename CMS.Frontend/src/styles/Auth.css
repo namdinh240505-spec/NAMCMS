@@ -124,3 +124,103 @@
 .auth-footer a:hover {
   text-decoration: underline;
 }
+
+/* Success message */
+.auth-success {
+  background: #ECFDF5;
+  color: #065F46;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  font-size: var(--font-sm);
+  text-align: center;
+}
+
+/* ==========================================
+   FORGOT PASSWORD — Progress Steps
+   ========================================== */
+
+.forgot-progress {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: var(--space-8);
+  position: relative;
+}
+
+.forgot-progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.forgot-progress-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--gray-400);
+  background: var(--white);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.forgot-progress-step.active .forgot-progress-circle {
+  border-color: var(--primary);
+  color: var(--white);
+  background: var(--primary);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+}
+
+.forgot-progress-step.completed .forgot-progress-circle {
+  border-color: #10B981;
+  color: var(--white);
+  background: #10B981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+}
+
+.forgot-progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forgot-progress-step.active .forgot-progress-label {
+  color: var(--primary);
+}
+
+.forgot-progress-step.completed .forgot-progress-label {
+  color: #10B981;
+}
+
+/* Success icon for step 4 */
+.forgot-success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto var(--space-6);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0); opacity: 0; }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+

@@ -161,6 +161,17 @@
   text-decoration: line-through;
 }
 
+.product-card-sold {
+  font-size: 11px;
+  color: #666;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-top: 6px;
+  font-weight: 500;
+  display: inline-block;
+}
+
 .card-star {
   font-size: var(--font-sm);
   color: var(--gray-300);

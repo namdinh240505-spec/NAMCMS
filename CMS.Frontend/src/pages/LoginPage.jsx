@@ -66,6 +66,9 @@ export default function LoginPage() {
               onChange={e => setPassword(e.target.value)}
               required
             />
+            <Link to="/forgot-password" style={{ fontSize: 'var(--font-sm)', color: 'var(--primary)', textAlign: 'right', marginTop: '4px' }}>
+              Quên mật khẩu?
+            </Link>
           </div>
 
           <button type="submit" className="btn btn-primary" disabled={loading}>

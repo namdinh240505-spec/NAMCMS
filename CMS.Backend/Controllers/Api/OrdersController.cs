@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMS.Data;
 using CMS.Data.Entities;
+using CMS.Backend.Helpers;
 using Microsoft.Extensions.Configuration;
 
 namespace CMS.Backend.Controllers.Api
@@ -12,11 +13,13 @@ namespace CMS.Backend.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly EmailService _emailService;
 
-        public OrdersController(ApplicationDbContext context, IConfiguration configuration)
+        public OrdersController(ApplicationDbContext context, IConfiguration configuration, EmailService emailService)
         {
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         // POST: api/orders
@@ -44,6 +47,8 @@ namespace CMS.Backend.Controllers.Api
             await _context.SaveChangesAsync();
 
             decimal totalAmount = 0;
+            var orderItemInfos = new List<OrderItemInfo>();
+
             foreach (var item in request.Items)
             {
                 var product = await _context.Products.FindAsync(item.ProductId);
@@ -58,6 +63,13 @@ namespace CMS.Backend.Controllers.Api
                     };
                     _context.OrderDetails.Add(detail);
                     totalAmount += product.Price * item.Quantity;
+
+                    orderItemInfos.Add(new OrderItemInfo
+                    {
+                        ProductName = product.Name,
+                        Quantity = item.Quantity,
+                        UnitPrice = product.Price
+                    });
                 }
             }
 
@@ -83,6 +95,11 @@ namespace CMS.Backend.Controllers.Api
                     $"Thanh toan don hang #{order.Id}"
                 );
                 Console.WriteLine($"[VNPAY URL] {vnpayUrl}");
+            }
+            else
+            {
+                // Đơn hàng COD → gửi email xác nhận ngay
+                await SendOrderEmailSafe(request.CustomerId, order, orderItemInfos, totalAmount);
             }
 
             return Ok(new
@@ -141,6 +158,25 @@ namespace CMS.Backend.Controllers.Api
                                 }
                             }
                             await _context.SaveChangesAsync();
+
+                            // Gửi email xác nhận đơn hàng VNPay thành công
+                            var orderItemInfos = new List<OrderItemInfo>();
+                            decimal totalAmount = 0;
+                            if (order.OrderDetails != null)
+                            {
+                                foreach (var detail in order.OrderDetails)
+                                {
+                                    var product = await _context.Products.FindAsync(detail.ProductId);
+                                    orderItemInfos.Add(new OrderItemInfo
+                                    {
+                                        ProductName = product?.Name ?? "Sản phẩm",
+                                        Quantity = detail.Quantity,
+                                        UnitPrice = detail.UnitPrice
+                                    });
+                                    totalAmount += detail.Quantity * detail.UnitPrice;
+                                }
+                            }
+                            await SendOrderEmailSafe(order.CustomerId, order, orderItemInfos, totalAmount);
                         }
                         return Ok(new { success = true, orderId = order.Id });
                     }
@@ -188,6 +224,38 @@ namespace CMS.Backend.Controllers.Api
                 .ToListAsync();
 
             return Ok(orders);
+        }
+
+        // ==========================================
+        // HELPER: Gửi email xác nhận đơn hàng (không throw nếu lỗi)
+        // ==========================================
+        private async Task SendOrderEmailSafe(int customerId, Order order, List<OrderItemInfo> items, decimal totalAmount)
+        {
+            try
+            {
+                var customer = await _context.Customers.FindAsync(customerId);
+                if (customer != null && !string.IsNullOrWhiteSpace(customer.Email))
+                {
+                    await _emailService.SendOrderConfirmationEmailAsync(
+                        customer.Email,
+                        customer.FullName,
+                        order.Id,
+                        order.OrderDate,
+                        order.ShippingName ?? customer.FullName,
+                        order.ShippingPhone ?? customer.Phone ?? "",
+                        order.ShippingAddress ?? customer.Address ?? "",
+                        order.PaymentMethod,
+                        items,
+                        totalAmount
+                    );
+                    Console.WriteLine($"[EMAIL] Đã gửi email xác nhận đơn hàng #{order.Id} đến {customer.Email}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nhưng không ảnh hưởng đến flow đặt hàng
+                Console.WriteLine($"[EMAIL ERROR] Không thể gửi email xác nhận đơn hàng #{order.Id}: {ex.Message}");
+            }
         }
     }
 

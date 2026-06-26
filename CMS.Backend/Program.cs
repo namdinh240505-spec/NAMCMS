@@ -2,7 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CMS.Data;
 using System.Text.Json.Serialization;
+using CMS.Backend.Helpers;
 var builder = WebApplication.CreateBuilder(args);
+
+// Register EmailService
+builder.Services.AddSingleton<EmailService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()

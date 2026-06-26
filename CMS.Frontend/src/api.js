@@ -62,6 +62,28 @@ export const loginCustomer = (data) => {
   });
 };
 
+// Forgot Password
+export const forgotPassword = (email) => {
+  return request('/api/customerauth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+};
+
+export const verifyResetCode = (email, code) => {
+  return request('/api/customerauth/verify-reset-code', {
+    method: 'POST',
+    body: JSON.stringify({ email, code }),
+  });
+};
+
+export const resetPassword = (email, code, newPassword) => {
+  return request('/api/customerauth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, code, newPassword }),
+  });
+};
+
 export const getCustomerProfile = (id) => {
   return request(`/api/customerauth/profile/${id}`);
 };
