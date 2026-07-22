@@ -12,6 +12,7 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
@@ -23,14 +24,16 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchStaticData() {
       try {
-        const [catRes, postRes, bestRes] = await Promise.all([
+        const [catRes, postRes, bestRes, featRes] = await Promise.all([
           getCategories(),
           getPosts({ pageSize: 3 }),
-          getBestSellers(8),
+          getBestSellers(3),
+          getProducts({ pageSize: 3, sortBy: 'newest' })
         ]);
         setCategories(catRes || []);
         setPosts(postRes.data || []);
         setBestSellers(bestRes || []);
+        setFeaturedProducts(featRes.data || []);
       } catch (err) {
         console.error('Error loading homepage:', err);
       }
@@ -169,9 +172,9 @@ export default function HomePage() {
                 >
                   <div style={{ aspectRatio: '4/3', overflow: 'hidden', background: '#f7f7f7' }}>
                     {cat.imageUrl ? (
-                      <img src={getImageUrl(cat.imageUrl)} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={getImageUrl(cat.imageUrl)} alt={cat.name} style={{ width: '20%', height: '20%', objectFit: 'cover' }} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: 'var(--gray-300)' }}>
+                      <div style={{ width: '20%', height: '20%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: 'var(--gray-300)' }}>
                         <FiGrid />
                       </div>
                     )}
@@ -181,7 +184,7 @@ export default function HomePage() {
                     color: 'black',
                     textAlign: 'center',
                     padding: '14px 0',
-                    fontWeight: '700',
+                    fontWeight: '100',
                     fontSize: '16px',
                     letterSpacing: '1px',
                     textTransform: 'uppercase'
@@ -213,9 +216,11 @@ export default function HomePage() {
             </div>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
               gap: 'var(--space-6)',
-              marginBottom: 'var(--space-16)'
+              marginBottom: 'var(--space-16)',
+              maxWidth: '960px',
+              margin: '0 auto'
             }}>
               {bestSellers.map((p) => (
                 <div key={p.id} style={{ position: 'relative' }}>
@@ -227,8 +232,45 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Featured Products */}
-      <section id="featured-products" style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)' }}>
+      {/* Featured Products (Newest 3 products) */}
+      {featuredProducts.length > 0 && (
+        <section id="featured-new-products" style={{ padding: 'var(--space-16) 0', background: 'var(--gray-50)', borderTop: '1px solid var(--gray-100)', borderBottom: '1px solid var(--gray-100)' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
+              <h2 style={{
+                fontSize: '2rem',
+                fontWeight: '700',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                color: 'var(--gray-900)',
+                margin: 0
+              }}>
+                SẢN PHẨM NỔI BẬT!
+              </h2>
+              <p style={{ color: 'var(--gray-500)', margin: 'var(--space-2) 0 0 0' }}>
+                Những sản phẩm mới nhất vừa được thêm vào cửa hàng
+              </p>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: 'var(--space-6)',
+              marginBottom: 'var(--space-16)',
+              maxWidth: '960px',
+              margin: '0 auto'
+            }}>
+              {featuredProducts.map((p) => (
+                <div key={p.id} style={{ position: 'relative' }}>
+                  <ProductCard product={p} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* All Products */}
+      <section id="featured-products" style={{ padding: 'var(--space-16) 0', background: 'var(--white)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 'var(--space-10)' }}>
             <h2 style={{
@@ -239,12 +281,12 @@ export default function HomePage() {
               color: 'var(--gray-900)',
               margin: '0 0 var(--space-2) 0'
             }}>
-              SẢN PHẨM NỔI BẬT!
+              TẤT CẢ SẢN PHẨM!
             </h2>
             <p style={{ color: 'var(--gray-500)', margin: 0 }}>
               {totalCount > 0
                 ? `Hiển thị ${(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–${Math.min(currentPage * PRODUCTS_PER_PAGE, totalCount)} / ${totalCount} sản phẩm`
-                : 'Sản phẩm được yêu thích nhất'}
+                : 'Sản phẩm của chúng tôi'}
             </p>
           </div>
           <div style={{

@@ -11,6 +11,7 @@
   display: flex;
   flex-direction: column;
   text-decoration: none;
+  height: 100%; /* Enforce card to stretch to full container height */
 }
 
 .product-card:hover {
@@ -19,12 +20,17 @@
 
 .product-card-image {
   position: relative;
-  aspect-ratio: 1;
-  overflow: visible;
+  width: 100%;
+  height: 0;
+  padding-top: 100%; /* Exact 1:1 Aspect Ratio padding hack */
+  overflow: hidden;
   background: #f7f7f7;
 }
 
 .product-card-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -118,14 +124,15 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--gray-700);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.4;
   text-transform: uppercase;
-  /* Match VANS style uppercase */
+  height: 36px;
+  /* Match VANS style uppercase and ensure uniform height */
 }
 
 .product-card-name:hover {
@@ -456,4 +463,76 @@
 .product-card-skeleton .skeleton-line.w-40 {
   width: 40%;
   height: 20px;
+}
+
+/* ==========================================
+   COLOR SELECTOR & QUICK ADD TO CART
+   ========================================== */
+
+.product-card-colors {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.product-card-color-btn {
+  padding: 2px 6px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-700);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.product-card-color-btn:hover:not(.active) {
+  border-color: var(--gray-400);
+}
+
+.product-card-color-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.product-card-quick-add-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: auto;
+  border-radius: var(--radius-sm);
+}
+
+.product-card-quick-add-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-orange);
+}
+
+.product-card-quick-add-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.product-card-quick-add-btn:disabled {
+  background: var(--gray-200);
+  color: var(--gray-400);
+  cursor: not-allowed;
 }

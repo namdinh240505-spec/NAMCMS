@@ -1,0 +1,17 @@
+com\namcms\shared\dto\ForgotPasswordRequest.class
+com\namcms\shared\dto\PagedResult.class
+com\namcms\shared\dto\AdminLoginRequest.class
+com\namcms\shared\dto\AdminLoginResponse.class
+com\namcms\shared\helper\EmailService.class
+com\namcms\shared\dto\CreateOrderRequest.class
+com\namcms\shared\dto\ResetPasswordRequest.class
+com\namcms\shared\dto\AddressRequest.class
+com\namcms\shared\dto\CustomerLoginRequest.class
+com\namcms\shared\dto\SendChatRequest.class
+com\namcms\shared\dto\OrderItemRequest.class
+com\namcms\shared\helper\VnPayHelper.class
+com\namcms\shared\dto\RegisterRequest.class
+com\namcms\shared\dto\ApiResponse.class
+com\namcms\shared\dto\OrderItemInfo.class
+com\namcms\shared\dto\UpdateProfileRequest.class
+com\namcms\shared\dto\VerifyResetCodeRequest.class

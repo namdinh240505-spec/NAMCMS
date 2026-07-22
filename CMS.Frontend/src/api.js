@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5288';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
@@ -20,9 +20,13 @@ async function request(endpoint, options = {}) {
 }
 
 // Products
-export const getProducts = (params = {}) => {
+export const getProducts = async (params = {}) => {
   const query = new URLSearchParams(params).toString();
-  return request(`/api/products${query ? `?${query}` : ''}`);
+  const res = await request(`/api/products${query ? `?${query}` : ''}`);
+  if (Array.isArray(res)) {
+    return { data: res, totalCount: res.length, totalPages: 1 };
+  }
+  return res;
 };
 
 export const getProductById = (id) => {
@@ -136,9 +140,13 @@ export const verifyVnPayReturn = (queryString) => {
 };
 
 // Posts (Blog)
-export const getPosts = (params = {}) => {
+export const getPosts = async (params = {}) => {
   const query = new URLSearchParams(params).toString();
-  return request(`/api/posts${query ? `?${query}` : ''}`);
+  const res = await request(`/api/posts${query ? `?${query}` : ''}`);
+  if (Array.isArray(res)) {
+    return { data: res, totalCount: res.length, totalPages: 1 };
+  }
+  return res;
 };
 
 export const getPostById = (id) => {

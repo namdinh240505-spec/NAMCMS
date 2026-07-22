@@ -1,0 +1,7 @@
+com\namcms\chat\config\ChatServiceConfig.class
+com\namcms\chat\ChatApplication.class
+com\namcms\chat\repository\ChatMessageRepository.class
+com\namcms\chat\client\AuthServiceClient$1.class
+com\namcms\chat\model\ChatMessage.class
+com\namcms\chat\client\AuthServiceClient.class
+com\namcms\chat\controller\ChatController.class

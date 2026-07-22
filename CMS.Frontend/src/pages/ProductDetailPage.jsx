@@ -14,7 +14,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
-  const { addToCart } = useCart();
+  const { items, addToCart } = useCart();
   const intervalRef = useRef(null);
   const availableColors = data?.product?.colors 
     ? data.product.colors.split(',').map(c => c.trim()).filter(Boolean)
@@ -108,6 +108,26 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!data?.product) return;
     const p = data.product;
+
+    if (p.stockQuantity <= 0) {
+      toast.error(`Sản phẩm "${p.name}" đã hết hàng!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      return;
+    }
+
+    const existingItem = items.find(item => item.id === p.id && item.color === selectedColor);
+    const qtyInCart = existingItem ? existingItem.quantity : 0;
+
+    if (qtyInCart + quantity > p.stockQuantity) {
+      toast.error(`Không thể thêm. Quá số lượng tồn kho (Đang có trong giỏ: ${qtyInCart}, Tồn kho: ${p.stockQuantity})!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      return;
+    }
+
     addToCart({
       id: p.id,
       name: p.name,
@@ -154,6 +174,40 @@ export default function ProductDetailPage() {
 
   const { product, relatedProducts } = data;
   const currentImageUrl = images.length > 0 ? getImageUrl(images[currentImageIndex]) : null;
+
+  const handleIncreaseQuantity = () => {
+    if (!product) return;
+    if (quantity >= product.stockQuantity) {
+      toast.error(`Số lượng chọn vượt quá số lượng tồn kho (${product.stockQuantity} sản phẩm hiện có)!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      return;
+    }
+    setQuantity(prev => prev + 1);
+  };
+
+  const handleDecreaseQuantity = () => {
+    setQuantity(prev => Math.max(1, prev - 1));
+  };
+
+  const handleQuantityInputChange = (e) => {
+    if (!product) return;
+    const val = parseInt(e.target.value, 10);
+    if (isNaN(val) || val < 1) {
+      setQuantity(1);
+      return;
+    }
+    if (val > product.stockQuantity) {
+      toast.error(`Số lượng chọn vượt quá số lượng tồn kho (${product.stockQuantity} sản phẩm hiện có)!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      setQuantity(product.stockQuantity);
+      return;
+    }
+    setQuantity(val);
+  };
 
   return (
     <div className="product-detail-page fade-in" id="product-detail-page">
@@ -230,6 +284,15 @@ export default function ProductDetailPage() {
               <div className="product-detail-desc">{product.description}</div>
             )}
 
+            {product.details && (
+              <div className="product-detail-specs-section">
+                <h3 style={{ marginTop: '24px', fontSize: '1.2rem', fontWeight: 700 }}>Thông số kỹ thuật / Chi tiết</h3>
+                <div className="product-detail-specs" style={{ whiteSpace: 'pre-line', color: 'var(--gray-600)', marginTop: '8px' }}>
+                  {product.details}
+                </div>
+              </div>
+            )}
+
             {product.stockQuantity > 0 && (
               <>
                 <div className="color-selector">
@@ -251,15 +314,15 @@ export default function ProductDetailPage() {
                 <div className="quantity-selector">
                   <label>Số lượng:</label>
                   <div className="quantity-controls">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))}><FiMinus /></button>
+                    <button onClick={handleDecreaseQuantity}><FiMinus /></button>
                     <input
                       type="number"
                       value={quantity}
-                      onChange={e => setQuantity(Math.max(1, Math.min(product.stockQuantity, parseInt(e.target.value) || 1)))}
+                      onChange={handleQuantityInputChange}
                       min="1"
                       max={product.stockQuantity}
                     />
-                    <button onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}><FiPlus /></button>
+                    <button onClick={handleIncreaseQuantity}><FiPlus /></button>
                   </div>
                 </div>
 

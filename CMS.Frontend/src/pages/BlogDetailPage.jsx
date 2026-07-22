@@ -78,11 +78,14 @@ export default function BlogDetailPage() {
           </div>
         )}
 
-        <div className="blog-detail-content">
-          {post.content?.split('\n').map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))}
-        </div>
+        <div 
+          className="blog-detail-content"
+          dangerouslySetInnerHTML={{ 
+            __html: post.content 
+              ? post.content.replace(/src="\/uploads\//g, `src="${getImageUrl('/uploads')}/`)
+              : '' 
+          }}
+        />
       </div>
     </div>
   );

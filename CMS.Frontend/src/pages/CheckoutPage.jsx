@@ -102,6 +102,8 @@ export default function CheckoutPage() {
     try {
       const orderData = {
         customerId: customer.id,
+        customerEmail: customer.email,
+        customerName: customer.fullName,
         notes,
         shippingAddress: selectedAddress.addressLine,
         shippingPhone: selectedAddress.receiverPhone,

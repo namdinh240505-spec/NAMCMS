@@ -1,0 +1,238 @@
+services:
+  # ==========================================
+  # DATABASE CONTAINER (MySQL)
+  # Single MySQL instance, multiple databases
+  # ==========================================
+  mysql-db:
+    image: mysql:8.0
+    container_name: namcms-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init-auth.sql:/docker-entrypoint-initdb.d/01-init-auth.sql
+      - ./database/init-product.sql:/docker-entrypoint-initdb.d/02-init-product.sql
+      - ./database/init-order.sql:/docker-entrypoint-initdb.d/03-init-order.sql
+      - ./database/init-content.sql:/docker-entrypoint-initdb.d/04-init-content.sql
+      - ./database/init-chat.sql:/docker-entrypoint-initdb.d/05-init-chat.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - namcms-network
+
+  # ==========================================
+  # EUREKA SERVER (Service Discovery)
+  # ==========================================
+  eureka-server:
+    image: namcms-eureka-server
+    container_name: namcms-eureka
+    build:
+      context: .
+      dockerfile: src/EurekaServer/Dockerfile
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - namcms-network
+
+  # ==========================================
+  # BACKEND MICROSERVICES
+  # ==========================================
+  auth-service:
+    image: namcms-auth-service
+    container_name: namcms-auth
+    build:
+      context: .
+      dockerfile: src/Services/Auth/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/namcms_auth_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - JWT_KEY=NamCMS_SuperSecretKey_2026_MicroService!
+      - JWT_ISSUER=NamCMS
+      - JWT_AUDIENCE=NamCMS
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - namcms-network
+
+  product-service:
+    image: namcms-product-service
+    container_name: namcms-product
+    build:
+      context: .
+      dockerfile: src/Services/Product/Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/namcms_product_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    volumes:
+      - ./uploads/products:/app/uploads/products
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - namcms-network
+
+  order-service:
+    image: namcms-order-service
+    container_name: namcms-order
+    build:
+      context: .
+      dockerfile: src/Services/Order/Dockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/namcms_order_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - VNPAY_TMN_CODE=3J6C23A0
+      - VNPAY_HASH_SECRET=HBPLPZM2TJRUZWD3NY1FXWT15C74W5XO
+      - VNPAY_BASE_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      - VNPAY_RETURN_URL=http://localhost:5174/vnpay-return
+      - PRODUCT_SERVICE_URL=http://product-service:5002
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    networks:
+      - namcms-network
+
+  content-service:
+    image: namcms-content-service
+    container_name: namcms-content
+    build:
+      context: .
+      dockerfile: src/Services/Content/Dockerfile
+    ports:
+      - "5004:5004"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/namcms_content_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - namcms-network
+
+  chat-service:
+    image: namcms-chat-service
+    container_name: namcms-chat
+    build:
+      context: .
+      dockerfile: src/Services/Chat/Dockerfile
+    ports:
+      - "5005:5005"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/namcms_chat_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - namcms-network
+
+  api-gateway:
+    image: namcms-api-gateway
+    container_name: namcms-gateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - AUTH_SERVICE_URI=http://auth-service:5001
+      - PRODUCT_SERVICE_URI=http://product-service:5002
+      - ORDER_SERVICE_URI=http://order-service:5003
+      - CONTENT_SERVICE_URI=http://content-service:5004
+      - CHAT_SERVICE_URI=http://chat-service:5005
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      content-service:
+        condition: service_started
+      chat-service:
+        condition: service_started
+    networks:
+      - namcms-network
+
+  # ==========================================
+  # FRONTEND APPLICATIONS
+  # ==========================================
+  admin-portal:
+    image: namcms-admin-portal
+    container_name: namcms-admin-ui
+    build:
+      context: ./admin-portal
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - namcms-network
+
+  shop-storefront:
+    image: namcms-shop-storefront
+    container_name: namcms-shop-ui
+    build:
+      context: ./CMS.Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - namcms-network
+
+volumes:
+  mysql-data:
+
+networks:
+  namcms-network:
+    driver: bridge

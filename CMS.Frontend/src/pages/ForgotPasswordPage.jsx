@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineBolt } from 'react-icons/hi2';
+
 import { FiMail, FiShield, FiLock, FiCheck, FiArrowLeft } from 'react-icons/fi';
 import { forgotPassword, verifyResetCode, resetPassword } from '../api';
 import '../styles/Auth.css';
@@ -130,8 +130,8 @@ export default function ForgotPasswordPage() {
       <div className="auth-card fade-in">
         <div className="auth-header">
           <div className="auth-logo">
-            <HiOutlineBolt style={{ color: 'var(--primary)' }} />
-            Nam<span>Tech</span>
+            <img src="/images/echoice-logo.png" alt="eChoice" className="auth-logo-img" />
+            e<span>Choice</span>
           </div>
           <h1>Quên mật khẩu</h1>
           <p>

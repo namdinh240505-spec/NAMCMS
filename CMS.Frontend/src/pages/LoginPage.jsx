@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineBolt } from 'react-icons/hi2';
+
 import { useAuth } from '../components/AuthContext';
 import { loginCustomer } from '../api';
 import '../styles/Auth.css';
@@ -34,8 +34,8 @@ export default function LoginPage() {
       <div className="auth-card fade-in">
         <div className="auth-header">
           <div className="auth-logo">
-            <HiOutlineBolt style={{ color: 'var(--primary)' }} />
-            Nam<span>Tech</span>
+            <img src="/images/echoice-logo.png" alt="eChoice" className="auth-logo-img" />
+            e<span>Choice</span>
           </div>
           <h1>Đăng nhập</h1>
           <p>Chào mừng quay trở lại!</p>

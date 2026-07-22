@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiX, FiPackage, FiLogOut } from 'react-icons/fi';
-import { HiOutlineBolt } from 'react-icons/hi2';
+
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';
 import '../styles/Header.css';
@@ -53,10 +53,8 @@ export default function Header() {
       <header className={`header ${scrolled ? 'scrolled' : ''}`}>
         <div className="container header-inner">
           <Link to="/" className="header-logo">
-            <div className="header-logo-icon">
-              <HiOutlineBolt />
-            </div>
-            Viin<span>Shop</span>
+            <img src="/images/echoice-logo.png" alt="eChoice" className="header-logo-img" />
+            e<span>Choice</span>
           </Link>
 
           <nav className="header-nav">

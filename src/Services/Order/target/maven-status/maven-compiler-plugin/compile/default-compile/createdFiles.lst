@@ -1,0 +1,8 @@
+com\namcms\order\controller\OrderController.class
+com\namcms\order\client\ProductServiceClient.class
+com\namcms\order\model\Order.class
+com\namcms\order\OrderApplication.class
+com\namcms\order\repository\OrderRepository.class
+com\namcms\order\model\OrderDetail.class
+com\namcms\order\repository\OrderDetailRepository.class
+com\namcms\order\config\OrderServiceConfig.class

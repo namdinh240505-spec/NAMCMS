@@ -1,0 +1,10 @@
+com\namcms\product\model\CategoryProduct.class
+com\namcms\product\repository\ProductImageRepository.class
+com\namcms\product\config\WebConfig.class
+com\namcms\product\controller\ProductController.class
+com\namcms\product\model\ProductImage.class
+com\namcms\product\repository\CategoryProductRepository.class
+com\namcms\product\repository\ProductRepository.class
+com\namcms\product\controller\CategoryController.class
+com\namcms\product\model\Product.class
+com\namcms\product\ProductApplication.class

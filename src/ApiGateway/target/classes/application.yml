@@ -1,0 +1,63 @@
+server:
+  port: 5000
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173,http://localhost:5174,http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        - id: auth-route
+          uri: ${AUTH_SERVICE_URI:http://localhost:5001}
+          predicates:
+            - Path=/api/adminauth/**, /api/customerauth/**, /api/user/**
+            
+        - id: product-route
+          uri: ${PRODUCT_SERVICE_URI:http://localhost:5002}
+          predicates:
+            - Path=/api/products/**, /api/categories/**, /uploads/products/**
+            
+        - id: order-route
+          uri: ${ORDER_SERVICE_URI:http://localhost:5003}
+          predicates:
+            - Path=/api/orders/**
+            
+        - id: content-route
+          uri: ${CONTENT_SERVICE_URI:http://localhost:5004}
+          predicates:
+            - Path=/api/posts/**, /api/post-categories/**, /api/banners/**
+            
+        - id: chat-route
+          uri: ${CHAT_SERVICE_URI:http://localhost:5005}
+          predicates:
+            - Path=/api/chat/**
+
+# Eureka Client
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  endpoint:
+    health:
+      show-details: always

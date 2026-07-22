@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import '../styles/ProductCard.css';
 
 export default function ProductCard({ product, showStockTooltip = false }) {
-  const { addToCart } = useCart();
+  const { items, addToCart } = useCart();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const intervalRef = useRef(null);
@@ -19,6 +19,12 @@ export default function ProductCard({ product, showStockTooltip = false }) {
   const [tooltipLoading, setTooltipLoading] = useState(false);
   const hoverTimerRef = useRef(null);
   const tooltipFetchedRef = useRef(false);
+
+  // Colors list and selectedColor state
+  const colorsList = product.colors
+    ? product.colors.split(',').map(c => c.trim()).filter(Boolean)
+    : [];
+  const [selectedColor, setSelectedColor] = useState(colorsList[0] || '');
 
   // Get all images (from images array or fallback to imageUrl)
   const images = product.images && product.images.length > 0
@@ -95,14 +101,36 @@ export default function ProductCard({ product, showStockTooltip = false }) {
   const handleAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (product.stockQuantity <= 0) {
+      toast.error(`Sản phẩm "${product.name}" đã hết hàng!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      return;
+    }
+
+    const activeColor = selectedColor || (colorsList[0] || 'Mặc định');
+    const existingItem = items.find(item => item.id === product.id && item.color === activeColor);
+    const qtyInCart = existingItem ? existingItem.quantity : 0;
+
+    if (qtyInCart + 1 > product.stockQuantity) {
+      toast.error(`Không thể thêm. Quá số lượng tồn kho (Tối đa: ${product.stockQuantity})!`, {
+        style: { borderRadius: '10px', background: '#1F2937', color: '#fff' },
+        iconTheme: { primary: '#EF4444', secondary: '#fff' },
+      });
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
       categoryName: product.categoryName,
+      color: activeColor,
     });
-    toast.success(`Đã thêm "${product.name}" vào giỏ hàng!`, {
+    toast.success(`Đã thêm "${product.name}" (Màu: ${activeColor}) vào giỏ hàng!`, {
       style: {
         borderRadius: '10px',
         background: '#1F2937',
@@ -178,7 +206,7 @@ export default function ProductCard({ product, showStockTooltip = false }) {
             <FiPackage />
           </div>
         )}
-        
+
         {/* Vans-style badges */}
         {discountPercent > 0 && (
           <span className="product-badge badge-discount">-{discountPercent}%</span>
@@ -224,7 +252,7 @@ export default function ProductCard({ product, showStockTooltip = false }) {
                   </div>
                   {stockInfo.stockQuantity > 0 && stockInfo.stockQuantity <= 5 && (
                     <div className="stock-tooltip-warning">
-                      🔥 Nhanh tay! Sắp hết hàng
+                      Nhanh tay! Sắp hết hàng
                     </div>
                   )}
                 </div>
@@ -247,6 +275,43 @@ export default function ProductCard({ product, showStockTooltip = false }) {
             Đã bán: {product.totalSold}
           </div>
         )}
+
+        {/* Colors selector */}
+        {colorsList.length > 0 && (
+          <div className="product-card-colors" onClick={e => e.stopPropagation()}>
+            {colorsList.map(color => (
+              <button
+                key={color}
+                type="button"
+                className={`product-card-color-btn ${selectedColor === color ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setSelectedColor(color);
+                }}
+              >
+                {color}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Quick Add Button */}
+        <button
+          type="button"
+          className="product-card-quick-add-btn"
+          disabled={product.stockQuantity <= 0}
+          onClick={handleAdd}
+        >
+          {product.stockQuantity > 0 ? (
+            <>
+              <FiPlus />
+              <span>Thêm vào giỏ</span>
+            </>
+          ) : (
+            <span>Hết hàng</span>
+          )}
+        </button>
       </div>
     </Link>
   );

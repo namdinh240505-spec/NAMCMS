@@ -193,3 +193,12 @@
     font-size: var(--font-base);
   }
 }
+
+.blog-detail-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin: var(--space-4) auto;
+  display: block;
+  box-shadow: var(--shadow-md);
+}

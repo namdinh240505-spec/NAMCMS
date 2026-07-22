@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { HiOutlineBolt } from 'react-icons/hi2';
+
 import { FiFacebook, FiInstagram, FiYoutube } from 'react-icons/fi';
 import '../styles/Footer.css';
 
@@ -10,8 +10,8 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo">
-              <div className="footer-logo-icon"><HiOutlineBolt /></div>
-              Nam<span>Tech</span>
+              <img src="/images/echoice-logo.png" alt="eChoice" className="footer-logo-img" />
+              e<span>Choice</span>
             </div>
             <p>
               Cửa hàng công nghệ và gaming gear uy tín hàng đầu.
@@ -41,8 +41,8 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 <span>ViinShop</span>. All rights reserved.</p>
-          <p>Powered by Viin </p>
+          <p>© 2026 <span>eChoice</span>. All rights reserved.</p>
+          <p>Powered by eChoice</p>
         </div>
       </div>
     </footer>

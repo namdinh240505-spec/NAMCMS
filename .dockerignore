@@ -1,0 +1,26 @@
+# Ignore build and output folders
+**/bin/
+**/obj/
+**/out/
+
+# Ignore IDE and settings
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore node modules and frontend builds
+**/node_modules/
+**/dist/
+**/build/
+
+# Ignore logs and temp files
+*.log
+.git/
+.github/
+.gitignore
+.dockerignore
+docker-compose*.yml
+database/

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineBolt } from 'react-icons/hi2';
+
 import { useAuth } from '../components/AuthContext';
 import { registerCustomer } from '../api';
 import '../styles/Auth.css';
@@ -55,8 +55,8 @@ export default function RegisterPage() {
       <div className="auth-card fade-in" style={{ maxWidth: 500 }}>
         <div className="auth-header">
           <div className="auth-logo">
-            <HiOutlineBolt style={{ color: 'var(--primary)' }} />
-            Nam<span>Tech</span>
+            <img src="/images/echoice-logo.png" alt="eChoice" className="auth-logo-img" />
+            e<span>Choice</span>
           </div>
           <h1>Tạo tài khoản</h1>
           <p>Đăng ký để bắt đầu mua sắm</p>
